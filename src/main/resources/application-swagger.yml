@@ -1,0 +1,31 @@
+# ---- SWAGGER ----
+springdoc:
+  swagger-ui:
+    display-request-duration: true
+    groups-order: DESC
+    operationsSorter: alpha
+    use-root-path: true
+    with-credentials: true
+    tags-sorter: method
+
+  show-actuator: false
+  group-configs:
+    - group: auth
+      paths-to-match: /auth/**
+      display-name: Authorization
+    - group: locations
+      paths-to-match: /locations/**
+      display-name: Locations
+    - group: shifts
+      paths-to-match: /shifts/**
+      display-name: Shifts
+    - group: user
+      paths-to-match: /users/**
+      display-name: Users
+    - group: testing
+      paths-to-match: /test/**
+      display-name: Testing
+  show-login-endpoint: true
+  api-docs:
+    path: /swagger/api-docs
+  override-with-generic-response: false

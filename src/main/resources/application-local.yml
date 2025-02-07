@@ -1,0 +1,23 @@
+spring:
+  # ---- DB ----
+  datasource:
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb #memory
+    # url: jdbc:h2:file:/data/demo #local
+    username: myuser
+    password: mypassword
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: ${DB_START_MODE:none}
+      # naming.implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+    properties:
+      hibernate:
+        format_sql: ${SHOW_SQL:false} # true for format the queries (requires show_sql to true)
+        show_sql: ${SHOW_SQL:false}
+    defer-datasource-initialization: true # load schema from entities
+    show-sql: false # show sql queries formatted (true for formatted, requires spring.jpa.properties.hibernate.show_sql and spring.jpa.properties.hibernate.format_sql)
+    database-platform: org.hibernate.dialect.H2Dialect

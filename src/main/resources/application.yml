@@ -1,0 +1,39 @@
+application:
+  title: '@project.name@'
+  name: '@project.artifactId@'
+  version: '@project.version@'
+
+spring:
+  application:
+    name: iPreachBackend
+
+  # ---- PROFILE ----
+  profiles:
+    include:
+      - ${ENVIRONMENT_PROFILE:local}
+      - endpoints
+      - swagger
+
+  # ---- API ----
+  mvc:
+    servlet:
+      path: /api/v1
+
+  # ---- JSON MAPPER ----
+  jackson:
+    default-property-inclusion: non_null
+
+# ---- SERVER ----
+server:
+  port: ${TOMCAT_PORT:8080}
+
+# ---- LOGGING ----
+logging:
+  level:
+    root: ${LOGGING_ROOT:INFO}
+    org.springframework.web: ${LOGGING_SPRING_WEB:INFO}
+    org.springframework.boot.autoconfigure.logging: ${LOGGING_SPRING_BOOT:INFO}
+    app.ipreach.backend: ${LOGGING_API:INFO}
+    org.hibernate.SQL: ${LOGGING_HIBERNATE:ERROR}
+    org.hibernate.type.descriptor.sql: ${LOGGING_HIBERNATE:ERROR}
+    org.hibernate.orm.jdbc.bind: ${LOGGING_HIBERNATE:ERROR}

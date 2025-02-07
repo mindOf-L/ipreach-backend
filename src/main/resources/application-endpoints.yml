@@ -1,0 +1,43 @@
+#request matchers to add in security configuration
+matchers:
+  endpoints:
+    - /auth/login
+  swagger:
+    - /swagger-ui
+    - /swagger-ui/**
+    - /webjars/**
+    - /swagger-ui.html
+    - /swagger/api-docs/**
+    - /swagger/api-docs
+    - /swagger/api-docs.yaml
+  test:
+    - /test/alive
+  errors:
+    - /error
+
+#exempted endpoints to process token filter
+exempted:
+  GET:
+  POST:
+  PUT:
+  PATCH:
+  DELETE:
+
+#endpoints which don't return token in headers
+nonToken:
+  GET:
+    - /api/v1/alive
+  POST:
+  PUT:
+  PATCH:
+  DELETE:
+
+#replace token endpoints to return a new token when calling these endpoints
+replaceToken:
+  GET:
+  POST:
+  PUT:
+    - /api/v1/users/me
+    - /api/v1/users/[0-9]+$ #e.g. /api/v1/users/11
+  PATCH:
+  DELETE:
