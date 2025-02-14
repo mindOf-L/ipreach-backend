@@ -1,0 +1,26 @@
+services:
+
+  postgresql:
+    image: postgres:17
+    container_name: ipreach-db
+    restart: always
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=mydb
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    networks:
+      - ipreach_api_network
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U myuser -d mydb" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postgresql:
+    name: ipreach_db_volume

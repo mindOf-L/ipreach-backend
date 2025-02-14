@@ -1,0 +1,64 @@
+services:
+
+  maven-build:
+    container_name: maven-build
+    image: maven:3.9.9-eclipse-temurin-23-alpine
+    volumes:
+      - ${M2_DIR:-${HOME}/.m2}:/root/.m2
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: mvn clean install -DskipTests
+
+  db:
+    image: postgres:17
+    container_name: ipreach-db
+    restart: always
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=mydb
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    networks:
+      - ipreach_api_db_network
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U myuser -d mydb" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  api:
+    container_name: ipreach-api
+    image: ghcr.io/graalvm/jdk-community:23
+    #build:
+    #  context: ./
+    #  dockerfile: Dockerfile
+    volumes:
+      - ./target:/opt/app
+    working_dir: /opt/app
+    environment:
+      - ENVIRONMENT_PROFILE=docker
+      - JAVA_OPTS=-XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom
+    networks:
+      - ipreach_api_db_network
+    depends_on:
+      maven-build:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    command: java $JAVA_OPTS -jar /opt/app/ipreach-backend.jar
+    restart: always
+
+networks:
+  ipreach_api_db_network:
+    driver: bridge
+
+volumes:
+  postgresql:
+    name: ipreach_db_volume
