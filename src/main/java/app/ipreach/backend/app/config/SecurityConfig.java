@@ -1,6 +1,9 @@
 package app.ipreach.backend.app.config;
 
 import app.ipreach.backend.shared.validation.Endpoint;
+import app.ipreach.backend.shared.validation.Security;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -14,19 +17,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+import java.util.List;
+
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    //private final BasicAuthenticationEntryPoint authenticationEntryPoint;
-
-    /*
-    public SecurityConfig(BasicAuthenticationEntryPoint authenticationEntryPoint) {
-        this.authenticationEntryPoint = authenticationEntryPoint;
-    }
-
-     */
+    @Value("${CORS_ORIGIN:*}")
+    private String corsOrigins;
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService() {
@@ -42,7 +46,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
             .csrf(AbstractHttpConfigurer::disable)
-            //.cors(Customizer.withDefaults())
+            .cors(Customizer.withDefaults())
             //.headers(headersConfig -> headersConfig.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(Endpoint.getMatchEndpoints()).permitAll()
@@ -71,6 +75,23 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of(corsOrigins.split(",")));
+
+        log.info("Allowed CORS: {}", Arrays.toString(corsOrigins.split(",")));
+
+        config.setAllowedHeaders(Security.getAllowedHeaders());
+        config.setAllowedMethods(Security.getAllowedMethods());
+        config.setExposedHeaders(Security.getExposedHeaders());
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
 }

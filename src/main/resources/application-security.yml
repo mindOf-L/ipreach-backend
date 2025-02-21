@@ -1,0 +1,24 @@
+#security configuration for headers and methods
+security:
+  headers:
+    - "GET"
+    - "POST"
+    - "PUT"
+    - "PATCH"
+    - "DELETE"
+    - "OPTIONS"
+  methods:
+    - "Authorization"
+    - "Accept"
+    - "Accept-Language"
+    - "content-type"
+    - "Requestor-Type"
+    - "X-Requested-With"
+    - "x-header-payload-token"
+    - "x-signature-token"
+    - "x-refresh-token"
+  exposed:
+    - "Allow"
+    - "X-Get-Header"
+    - "x-header-payload-token"
+    - "x-signature-token"

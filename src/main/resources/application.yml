@@ -13,6 +13,7 @@ spring:
       - ${ENVIRONMENT_PROFILE:local}
       - endpoints
       - swagger
+      - security
 
   # ---- API ----
   mvc:
