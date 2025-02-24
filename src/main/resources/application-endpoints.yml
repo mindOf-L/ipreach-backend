@@ -11,7 +11,7 @@ matchers:
     - /swagger/api-docs
     - /swagger/api-docs.yaml
   test:
-    - /test/alive
+    - /test/**
   errors:
     - /error
 
@@ -26,7 +26,6 @@ exempted:
 #endpoints which don't return token in headers
 nonToken:
   GET:
-    - /api/v1/alive
   POST:
   PUT:
   PATCH:
