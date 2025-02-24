@@ -25,8 +25,14 @@ public class InitializationData {
 
     private final UserRepository userRepository;
 
-    @Value("${DB_NAME:mydb}") private String dbName;
-    @Value("${LOAD_INITIAL_DATA:false}") private boolean loadInitialData;
+    @Value("${DB_NAME:mydb}")
+    private String dbName;
+
+    @Value("${LOAD_INITIAL_DATA:false}")
+    private boolean loadInitialData;
+
+    @Value("${spring.datasource.driverClassName}")
+    private String driverClassName;
 
     @Bean
     @Profile("!pro")
@@ -34,10 +40,12 @@ public class InitializationData {
         if (!loadInitialData) return null;
 
         return () -> {
-            // execute when changing database version
-            jdbcTemplate.execute("ALTER DATABASE \"%s\" REFRESH COLLATION VERSION;".formatted(dbName));
-            // set accent-insensitive on searches
-            jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS unaccent;");
+            if(driverClassName.equals("org.postgresql.Driver")) {
+                // execute when changing database version
+                jdbcTemplate.execute("ALTER DATABASE \"%s\" REFRESH COLLATION VERSION;".formatted(dbName));
+                // set accent-insensitive on searches
+                jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS unaccent;");
+            }
 
             userRepository.save(User.builder()
                 .name("admin")
