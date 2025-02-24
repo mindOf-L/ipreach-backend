@@ -1,13 +1,13 @@
 #security configuration for headers and methods
 security:
-  headers:
+  methods:
     - "GET"
     - "POST"
     - "PUT"
     - "PATCH"
     - "DELETE"
     - "OPTIONS"
-  methods:
+  headers:
     - "Authorization"
     - "Accept"
     - "Accept-Language"
