@@ -38,3 +38,7 @@ logging:
     org.hibernate.SQL: ${LOGGING_HIBERNATE:ERROR}
     org.hibernate.type.descriptor.sql: ${LOGGING_HIBERNATE:ERROR}
     org.hibernate.orm.jdbc.bind: ${LOGGING_HIBERNATE:ERROR}
+
+refresh-token-header: x-refresh-token
+payload-token-header: x-header-payload-token
+signature-token-header: x-signature-token
