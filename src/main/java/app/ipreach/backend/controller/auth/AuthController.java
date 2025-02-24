@@ -8,7 +8,6 @@ import app.ipreach.backend.db.repository.UserRepository;
 import app.ipreach.backend.mapper.dto.auth.LoginDto;
 import app.ipreach.backend.mapper.dto.user.UserDto;
 import app.ipreach.backend.mapper.payload.user.UserMapper;
-import app.ipreach.backend.shared.constants.ContextConstants;
 import app.ipreach.backend.shared.constants.Messages;
 import app.ipreach.backend.shared.creation.Constructor;
 import com.nimbusds.jose.JOSEException;

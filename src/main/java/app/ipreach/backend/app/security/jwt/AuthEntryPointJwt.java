@@ -1,11 +1,9 @@
 package app.ipreach.backend.app.security.jwt;
 
 import app.ipreach.backend.app.exception.custom.RequestException;
-import app.ipreach.backend.shared.constants.Messages;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

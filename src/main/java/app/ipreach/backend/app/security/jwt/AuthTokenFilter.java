@@ -3,7 +3,6 @@ package app.ipreach.backend.app.security.jwt;
 import app.ipreach.backend.app.exception.custom.RequestException;
 import app.ipreach.backend.app.security.user.UserDetailsImpl;
 import app.ipreach.backend.app.security.user.UserDetailsServiceImpl;
-import app.ipreach.backend.app.security.user.UserPrincipal;
 import app.ipreach.backend.shared.constants.Messages;
 import com.nimbusds.jwt.SignedJWT;
 import io.micrometer.common.util.StringUtils;

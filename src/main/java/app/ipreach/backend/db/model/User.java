@@ -1,7 +1,7 @@
 package app.ipreach.backend.db.model;
 
-import app.ipreach.backend.shared.enums.ERole;
 import app.ipreach.backend.shared.conversion.ERoleConverter;
+import app.ipreach.backend.shared.enums.ERole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
