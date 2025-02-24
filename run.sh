@@ -1,4 +1,30 @@
 n=0
+
+if [ -z "$1" ]; then
+  echo "Usage: $0
+      ***************************************************************************************************
+      | iPreach commands | Description                                                                  |
+      ***************************************************************************************************
+      | → create-local   | Build and launch project withou Docker                                       |
+      | → create         | Build and launch project without API, just dependencies of the backend (API) |
+      | → restart        | Just launch project without API, just dependencies of the backend (API)      |
+      | → create-api     | Build and launch project with API, just dependencies of the backend (API)    |
+      | → restart-api    | Just launch project with API, just dependencies of the backend (API)         |
+      |-------------------------------------------------------------------------------------------------|
+      "
+  exit 1
+fi
+
+case "$1" in
+  create-local)
+    LOAD_INITIAL_DATA=true
+    DB_START_MODE=create
+    mvn clean install -DskipTests
+    mvn spring-boot:run
+    exit 1
+    ;;
+esac
+
 # Open Docker, only if is not running
 if (! docker ps ); then
   read -rp 'Docker is not started, do you want for this script to try to start it? [Y/n] ' start_docker
@@ -27,20 +53,6 @@ if (! docker ps ); then
   fi
 fi
 
-if [ -z "$1" ]; then
-  echo "Usage: $0
-      ***************************************************************************************************
-      | iPreach commands | Description                                                                  |
-      ***************************************************************************************************
-      | → create         | Build and launch project without API, just dependencies of the backend (API) |
-      | → restart        | Just launch project without API, just dependencies of the backend (API)      |
-      | → create-api     | Build and launch project with API, just dependencies of the backend (API)    |
-      | → restart-api    | Just launch project with API, just dependencies of the backend (API)         |
-      |-------------------------------------------------------------------------------------------------|
-      "
-  exit 1
-fi
-
 if [ ! -f target ]; then
   rm -rf target
 else
@@ -58,16 +70,11 @@ LOAD_INITIAL_DATA=false
 TEST_DATA=false
 
 case "$1" in
-  create|create-api|create-ui)
+  create|create-api)
     DB_START_MODE=create
     LOAD_INITIAL_DATA=true
     ;;
-  create-test-data-api|create-test-data-ui)
-    DB_START_MODE=create
-    LOAD_INITIAL_DATA=true
-    TEST_DATA=true
-    ;;
-  restart|restart-api|restart-ui)
+  restart|restart-api)
     DB_START_MODE=none
     LOAD_INITIAL_DATA=false
     ;;
@@ -94,20 +101,15 @@ case "$1" in
   create|restart)
     DB_START_MODE=$DB_START_MODE LOAD_INITIAL_DATA=$LOAD_INITIAL_DATA TEST_DATA=$TEST_DATA docker compose -f docker-compose-no-api.yml up -d
   ;;
-  create-api|create-test-data-api|restart-api)
+  create-api|restart-api)
     DB_START_MODE=$DB_START_MODE LOAD_INITIAL_DATA=$LOAD_INITIAL_DATA TEST_DATA=$TEST_DATA docker compose -f docker-compose-api.yml up -d
   ;;
 esac
 
 case "$1" in
-  create-api|create-test-data-api|restart-api)
+  create-api|create-local|restart-api)
     echo "ready to work with API @ http://localhost:8080/api, better from postman hehe"
     echo "check api is alive in http://localhost:8080/api/alive"
     echo "check swagger @ http://localhost:8080/api/v1/swagger-ui/index.html"
-  ;;
-esac
-case "$1" in
-  create-ui|create-test-data-ui|restart-ui)
-    echo "ready UI @ https://localhost:3000"
   ;;
 esac
