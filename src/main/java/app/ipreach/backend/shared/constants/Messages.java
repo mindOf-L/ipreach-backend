@@ -32,9 +32,23 @@ public class Messages {
     public static class ErrorClient {
 
         public static final String
-            USER_NOT_FOUND = "User not found",
+            LOGIN_CREDENTIALS_WRONG = "Username/password doesn't match",
 
-            ERROR_PROCESSING_DATA = "Error processing data"
+            USER_NOT_FOUND = "User not found",
+            USER_PARAMETERS_ERROR = "Error in user parameters",
+            USER_PASSWORD_DONT_MATCH = "User+password doesn't match",
+            USER_NOT_ENABLED = "User not enabled",
+
+            TOKEN_INVALID = "Token invalid",
+            THIS_TOKEN_INVALID = "Token invalid: %s",
+            TOKEN_NOT_FOUND = "Token not found",
+            TOKEN_NOT_PARSEABLE = "Token not parseable",
+
+            ERROR_TOKEN_NOT_PROVIDED = "Please provide auth token",
+
+            ERROR_PROCESSING_DATA = "Error processing data",
+
+            RUNTIME_EXCEPTION = "Runtime exception"
 
             ;
     }
@@ -42,7 +56,11 @@ public class Messages {
     public static class ErrorDev {
 
         public static final String
-            SHIFT_LIST_NULL_OR_EMPTY = "Shift list is null or empty"
+            HASH_ALGORITHM_ERROR = "Hash algorithm error",
+
+            SHIFT_LIST_NULL_OR_EMPTY = "Shift list is null or empty",
+
+            GENERIC_ERROR = "Something went wrong. Please try again later, or contact support."
 
             ;
     }

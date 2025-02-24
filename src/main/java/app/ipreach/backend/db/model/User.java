@@ -1,6 +1,6 @@
 package app.ipreach.backend.db.model;
 
-import app.ipreach.backend.shared.constants.ERole;
+import app.ipreach.backend.shared.enums.ERole;
 import app.ipreach.backend.shared.conversion.ERoleConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
 
@@ -32,6 +32,10 @@ public class User {
     @Column(updatable = false, nullable = false)
     private Long id;
 
+    private String email;
+
+    private String password;
+
     private Long botId;
 
     private String botName;
@@ -47,10 +51,24 @@ public class User {
 
     private String congregation;
 
-    @NonNull @NotNull @Column(nullable = false)
+    @NotNull @Column(nullable = false)
     @Convert(converter = ERoleConverter.class)
     private List<ERole> roles;
 
+    public String[] getRolesUserDetails() {
+        return this.getRoles().stream().map(ERole::getRoleName).toArray(String[]::new);
+    }
+
+    public List<SimpleGrantedAuthority> getRolesAuthorities() {
+        return this.getRoles().stream()
+            .map(r -> new SimpleGrantedAuthority(r.getRoleName()))
+            .toList();
+    }
+
+    @Column(nullable = false)
     private boolean approved;
+
+    @Column(nullable = false)
+    private boolean enabled;
 
 }

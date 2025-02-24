@@ -1,11 +1,11 @@
 package app.ipreach.backend.shared.creation;
 
-import app.ipreach.backend.dto.user.LocationDto;
-import app.ipreach.backend.dto.user.ShiftDto;
-import app.ipreach.backend.dto.user.ShiftRequestDto;
-import app.ipreach.backend.dto.user.UserDto;
-import app.ipreach.backend.shared.constants.ERole;
-import app.ipreach.backend.shared.constants.EStatus;
+import app.ipreach.backend.mapper.dto.user.LocationDto;
+import app.ipreach.backend.mapper.dto.user.ShiftDto;
+import app.ipreach.backend.mapper.dto.user.ShiftRequestDto;
+import app.ipreach.backend.mapper.dto.user.UserDto;
+import app.ipreach.backend.shared.enums.ERole;
+import app.ipreach.backend.shared.enums.EStatus;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -27,7 +27,6 @@ public class FakeClass {
 
         return UserDto.builder()
             .id(RandomUtils.secure().randomLong())
-            .username(faker.internet().username())
             .email(faker.internet().emailAddress())
 
             .botId(RandomUtils.secure().randomLong())
@@ -40,7 +39,7 @@ public class FakeClass {
 
             .congregation(faker.planet().name())
 
-            .userRoles(getRandomListFromEnum(ERole.class, 3))
+            .roles(getRandomListFromEnum(ERole.class, 3))
 
             .approved(RandomUtils.secure().randomBoolean())
 

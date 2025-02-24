@@ -1,6 +1,6 @@
 package app.ipreach.backend.db.model;
 
-import app.ipreach.backend.shared.constants.EStatus;
+import app.ipreach.backend.shared.enums.EStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

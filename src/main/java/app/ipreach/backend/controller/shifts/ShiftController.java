@@ -1,6 +1,6 @@
 package app.ipreach.backend.controller.shifts;
 
-import app.ipreach.backend.dto.user.ShiftDto;
+import app.ipreach.backend.mapper.dto.user.ShiftDto;
 import app.ipreach.backend.shared.constants.Messages;
 import app.ipreach.backend.shared.creation.FakeClass;
 import io.swagger.v3.oas.annotations.tags.Tag;
