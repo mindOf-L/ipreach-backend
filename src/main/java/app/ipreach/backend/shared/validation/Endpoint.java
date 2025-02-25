@@ -1,6 +1,6 @@
 package app.ipreach.backend.shared.validation;
 
-import app.ipreach.backend.app.config.EndpointProperties;
+import app.ipreach.backend.core.config.EndpointProperties;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 

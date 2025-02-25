@@ -1,7 +1,7 @@
 package app.ipreach.backend.shared.validation;
 
-import app.ipreach.backend.app.exception.custom.RequestException;
-import app.ipreach.backend.mapper.dto.user.UserDto;
+import app.ipreach.backend.core.exception.custom.RequestException;
+import app.ipreach.backend.users.payload.dto.UserDto;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;

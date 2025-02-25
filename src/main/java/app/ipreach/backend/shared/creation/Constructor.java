@@ -1,6 +1,6 @@
 package app.ipreach.backend.shared.creation;
 
-import app.ipreach.backend.mapper.dto.shared.ResponseDto;
+import app.ipreach.backend.shared.dto.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class Constructor {
     }
 
     public static ResponseEntity<?> buildResponseHeaders(HttpStatus httpStatus, Object body, HttpHeaders headers) {
-        return ResponseEntity.status(httpStatus).headers(headers).body(body);
+        return ResponseEntity.status(httpStatus).headers(headers).body(buildResponseDto(httpStatus, body, null));
     }
 
     public static ResponseEntity<?> buildResponseHeaders(HttpStatus httpStatus, Object body, String message, HttpHeaders headers) {

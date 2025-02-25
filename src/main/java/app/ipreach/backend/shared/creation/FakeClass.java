@@ -1,11 +1,11 @@
 package app.ipreach.backend.shared.creation;
 
-import app.ipreach.backend.mapper.dto.user.LocationDto;
-import app.ipreach.backend.mapper.dto.user.ShiftDto;
-import app.ipreach.backend.mapper.dto.user.ShiftRequestDto;
-import app.ipreach.backend.mapper.dto.user.UserDto;
 import app.ipreach.backend.shared.enums.ERole;
 import app.ipreach.backend.shared.enums.EStatus;
+import app.ipreach.backend.users.payload.dto.LocationDto;
+import app.ipreach.backend.users.payload.dto.ShiftDto;
+import app.ipreach.backend.users.payload.dto.ShiftRequestDto;
+import app.ipreach.backend.users.payload.dto.UserDto;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomUtils;
 

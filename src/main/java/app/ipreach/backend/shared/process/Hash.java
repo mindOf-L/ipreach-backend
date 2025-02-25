@@ -1,6 +1,6 @@
 package app.ipreach.backend.shared.process;
 
-import app.ipreach.backend.app.exception.custom.RequestException;
+import app.ipreach.backend.core.exception.custom.RequestException;
 import app.ipreach.backend.shared.constants.Messages;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.encoders.Hex;
