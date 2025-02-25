@@ -11,8 +11,8 @@
     <groupId>app</groupId>
     <artifactId>ipreach-backend</artifactId>
     <version>0.1</version>
-    <name>iPreachBackend</name>
-    <description>iPreachBackend</description>
+    <name>iPreach-backend</name>
+    <description>iPreach backend manager for SMPWP</description>
 
     <properties>
         <!-- build -->
