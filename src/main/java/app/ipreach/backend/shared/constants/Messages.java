@@ -46,6 +46,8 @@ public class Messages {
 
             ERROR_TOKEN_NOT_PROVIDED = "Please provide auth token",
 
+            ERROR_CALLING_API = "Error calling API",
+
             ERROR_PROCESSING_DATA = "Error processing data",
 
             RUNTIME_EXCEPTION = "Runtime exception"

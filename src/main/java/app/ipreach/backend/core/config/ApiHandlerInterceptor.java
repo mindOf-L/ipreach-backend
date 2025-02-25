@@ -23,7 +23,7 @@ import java.util.UUID;
 public class ApiHandlerInterceptor implements HandlerInterceptor {
 
     //private final JwtUtils jwtUtils;
-    private final UUID petitionID = UUID.randomUUID();
+    private UUID petitionID;
     private String petitionHttpMethod;
     private String petitionEndpoint;
     private LocalDateTime petitionStartTime;
@@ -46,6 +46,13 @@ public class ApiHandlerInterceptor implements HandlerInterceptor {
         this.petitionAgent = Optional.ofNullable(request.getHeader("user-agent")).orElse("postman/unknown");
         this.petitionOrigin = Optional.ofNullable(request.getHeader("origin")).orElse("No origin");
 
+        if(MDC.get("petitionId") != null) {
+            this.petitionID = UUID.fromString(MDC.get("petitionId"));
+        } else {
+            this.petitionID = UUID.randomUUID();
+            MDC.put("petitionId", this.petitionID.toString());
+        }
+
         log.info("### [PRE] Petition with id {}, calling to [{}]{}, from {} with origin {} at {}.",
             this.petitionID,
             this.petitionHttpMethod,
@@ -56,7 +63,7 @@ public class ApiHandlerInterceptor implements HandlerInterceptor {
 
         this.petitionEndpoint = request.getRequestURI();
         this.petitionHttpMethod = request.getMethod();
-        MDC.put("petitionId", this.petitionID.toString());
+
         MDC.put("petitionEndpoint", this.petitionEndpoint);
 
         String refreshToken = request.getHeader(refreshTokenHeader);

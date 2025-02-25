@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static app.ipreach.backend.core.exception.ExceptionLogger.logErrorInConsole;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -44,15 +46,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<?> handleAll(Exception ex) {
         logErrorInConsole(ex.getClass().getName(), ex, HttpStatus.INTERNAL_SERVER_ERROR, Messages.ErrorDev.GENERIC_ERROR);
         return Constructor.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, buildApiErrorFromStackTrace(ex), Messages.ErrorDev.GENERIC_ERROR);
-    }
-
-    private void logErrorInConsole(String exceptionParent, Exception ex, HttpStatus status, String errorMessage) {
-        String causedBy = String.format("%s -> %s", ex.getStackTrace()[0].getFileName(), ex.getStackTrace()[0].getMethodName());
-
-        String exceptionClass = ex.getClass().getSimpleName();
-
-        log.error("[{}]::[{}]:: {} -> {}: {}. Error message: {}", MDC.get("petitionId"), status.value(), exceptionParent, exceptionClass, ex.getLocalizedMessage(), errorMessage);
-        log.error("[{}]::[{}]:: Caused by: {}", MDC.get("petitionId"), HttpStatus.INTERNAL_SERVER_ERROR.value(), causedBy);
     }
 
     private ApiError buildApiErrorFromStackTrace(Exception ex) {
