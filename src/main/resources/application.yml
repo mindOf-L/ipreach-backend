@@ -1,11 +1,12 @@
 application:
   title: '@project.name@'
   name: '@project.artifactId@'
+  url: 'https://ipreach.app'
   version: '@project.version@'
 
 spring:
   application:
-    name: iPreachBackend
+    name: iPb
 
   # ---- PROFILE ----
   profiles:
