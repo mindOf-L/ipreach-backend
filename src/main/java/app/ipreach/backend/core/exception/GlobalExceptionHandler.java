@@ -48,7 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return Constructor.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, buildApiErrorFromStackTrace(ex), Messages.ErrorDev.GENERIC_ERROR);
     }
 
-    private ApiError buildApiErrorFromStackTrace(Exception ex) {
+    public static ApiError buildApiErrorFromStackTrace(Exception ex) {
         // root cause
         var stackTraceBackend = Arrays.stream(ex.getStackTrace()).filter(stack -> stack.getClassName().contains("app.ipreach.backend")).toList().getLast();
 

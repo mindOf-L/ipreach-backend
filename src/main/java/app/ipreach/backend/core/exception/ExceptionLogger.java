@@ -12,7 +12,7 @@ public class ExceptionLogger {
         String exceptionClass = ex.getClass().getSimpleName();
         String petitionId = MDC.get("petitionId");
 
-        log.error("[INIT]::[{}]:: {} -> {}: {}. Petition with id {}. Error message: {}", status.value(), exceptionParent, exceptionClass, ex.getLocalizedMessage(), petitionId, errorMessage);
-        log.error("[INIT]::[{}]:: Petition with id {} Caused by: {}", HttpStatus.INTERNAL_SERVER_ERROR.value(), petitionId, causedBy);
+        log.error("### [INIT]::[{}]:: {} -> {}: {}. Petition with id {}. Error message: {}", status.value(), exceptionParent, exceptionClass, ex.getLocalizedMessage(), petitionId, errorMessage);
+        log.error("### [INIT]::[{}]:: Petition with id {} Caused by: {}", HttpStatus.INTERNAL_SERVER_ERROR.value(), petitionId, causedBy);
     }
 }
