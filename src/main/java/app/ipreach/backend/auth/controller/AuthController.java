@@ -124,7 +124,7 @@ public class AuthController {
 
     private Cookie createCookie(String key, String value) {
         var cookie = new Cookie(key, value);
-        cookie.setMaxAge(7 * 24 * 60 * 60);
+        cookie.setMaxAge(24 * 60 * 60);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/api/v1");
