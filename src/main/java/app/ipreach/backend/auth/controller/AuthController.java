@@ -4,6 +4,8 @@ import app.ipreach.backend.auth.db.repository.TokenRepository;
 import app.ipreach.backend.auth.payload.dto.LoginDto;
 import app.ipreach.backend.core.exception.custom.RequestException;
 import app.ipreach.backend.core.security.jwt.JwtUtils;
+import app.ipreach.backend.core.security.user.CurrentUser;
+import app.ipreach.backend.core.security.user.UserDetailsImpl;
 import app.ipreach.backend.shared.constants.Messages;
 import app.ipreach.backend.shared.creation.Constructor;
 import app.ipreach.backend.users.db.model.User;
@@ -80,7 +82,13 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
+    public ResponseEntity<?> logout(@CurrentUser UserDetailsImpl user, HttpServletResponse response) {
+        response.addCookie(deleteCookie(refreshTokenHeader));
+        response.addCookie(deleteCookie(payloadTokenHeader));
+        response.addCookie(deleteCookie(signatureTokenHeader));
+
+        tokenRepository.deleteAllTokensFromUser(user.getId());
+
         return buildResponse(OK, Messages.Info.USER_LOGGED_OUT);
     }
 
@@ -125,6 +133,15 @@ public class AuthController {
     private Cookie createCookie(String key, String value) {
         var cookie = new Cookie(key, value);
         cookie.setMaxAge(24 * 60 * 60);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/api/v1");
+        return cookie;
+    }
+
+    private Cookie deleteCookie(String key) {
+        var cookie = new Cookie(key, null);
+        cookie.setMaxAge(0);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/api/v1");
