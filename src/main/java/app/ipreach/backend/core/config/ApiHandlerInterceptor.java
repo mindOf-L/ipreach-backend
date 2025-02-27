@@ -53,6 +53,9 @@ public class ApiHandlerInterceptor implements HandlerInterceptor {
             MDC.put("petitionId", this.petitionID.toString());
         }
 
+        this.petitionEndpoint = request.getRequestURI();
+        this.petitionHttpMethod = request.getMethod();
+
         log.info("### [PRE] Petition with id {}, calling to [{}]{}, from {} with origin {} at {}.",
             this.petitionID,
             this.petitionHttpMethod,
@@ -60,9 +63,6 @@ public class ApiHandlerInterceptor implements HandlerInterceptor {
             this.petitionAgent,
             this.petitionOrigin,
             this.petitionStartTime);
-
-        this.petitionEndpoint = request.getRequestURI();
-        this.petitionHttpMethod = request.getMethod();
 
         MDC.put("petitionEndpoint", this.petitionEndpoint);
 
