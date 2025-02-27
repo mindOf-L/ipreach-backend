@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -24,6 +25,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static app.ipreach.backend.shared.validation.Endpoint.isNotReplaceTokenEndpoint;
 import static app.ipreach.backend.shared.validation.Endpoint.isTokenEndpoint;
@@ -53,13 +56,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
         throws ServletException, IOException {
 
-        final String refreshJwt = request.getHeader(refreshTokenHeader);
-        final String jwtHeaderPayload = request.getHeader(payloadTokenHeader);
-        final String jwtSignature = request.getHeader(signatureTokenHeader);
+        var cookiesMap = Arrays.stream(request.getCookies())
+            .collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
 
-        final boolean authIsNotPresent = StringUtils.isBlank(jwtHeaderPayload) || StringUtils.isBlank(jwtSignature);
+        String jwtHeaderPayload = cookiesMap.get(payloadTokenHeader);
+        String jwtSignature = cookiesMap.get(signatureTokenHeader);
+        String refreshJwt = cookiesMap.get(refreshTokenHeader);
+        boolean jwtNotPresent = StringUtils.isBlank(jwtHeaderPayload) || StringUtils.isBlank(jwtSignature);
 
-        if (authIsNotPresent || nonTokenEndpoint(request.getMethod(), request.getRequestURI())) {
+        if (jwtNotPresent || nonTokenEndpoint(request.getMethod(), request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -103,5 +108,4 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
 
     }
-
 }

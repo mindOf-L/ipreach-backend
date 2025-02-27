@@ -1,6 +1,5 @@
 package app.ipreach.backend.core.security.jwt;
 
-import app.ipreach.backend.core.exception.custom.RequestException;
 import app.ipreach.backend.shared.constants.Messages;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,24 +15,25 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static app.ipreach.backend.core.exception.ExceptionLogger.logErrorInConsole;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Slf4j
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex) throws IOException {
 
         MDC.put("petitionId", UUID.randomUUID());
 
-        logErrorInConsole("RequestException", authException, HttpStatus.BAD_REQUEST, Messages.ErrorClient.ERROR_CALLING_API);
+        logErrorInConsole("RequestException", ex, HttpStatus.BAD_REQUEST, Messages.ErrorClient.ERROR_CALLING_API);
 
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, Messages.ErrorClient.ERROR_CALLING_API);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        response.getWriter().write(authException.getMessage());
+        response.getWriter().write(ex.getMessage());
 
-        throw new RequestException(BAD_REQUEST, authException.getMessage(), authException);
+        //throw new RequestException(BAD_REQUEST, ex.getMessage(), ex);
+
+        //logErrorInConsole(ex.getClass().getName(), ex, HttpStatus.INTERNAL_SERVER_ERROR, Messages.ErrorDev.GENERIC_ERROR);
+        //return Constructor.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, buildApiErrorFromStackTrace(ex), Messages.ErrorDev.GENERIC_ERROR);
     }
 }

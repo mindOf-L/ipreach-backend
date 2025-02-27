@@ -13,10 +13,11 @@ import app.ipreach.backend.users.payload.mapper.UserMapper;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.SignedJWT;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -59,7 +60,7 @@ public class AuthController {
     private String signatureTokenHeader;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto) throws ParseException, JOSEException {
+    public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto, HttpServletResponse response) throws ParseException, JOSEException {
 
         User userEntity = userRepository.findByEmail(loginDto.email()).orElseThrow(() ->
             new RequestException(HttpStatus.NOT_FOUND, Messages.ErrorClient.USER_NOT_FOUND));
@@ -75,7 +76,7 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return setToken(userEntity);
+        return setToken(userEntity, response);
     }
 
     @PostMapping("/logout")
@@ -90,24 +91,28 @@ public class AuthController {
         return buildResponse(OK, UserMapper.MAPPER.toDTO(user));
     }
 
-    private ResponseEntity<?> setToken(User user) throws ParseException, JOSEException {
-        HttpHeaders headers = new HttpHeaders();
+    private ResponseEntity<?> setToken(User user, HttpServletResponse response) throws ParseException, JOSEException {
+        //HttpHeaders headers = new HttpHeaders();
 
         SignedJWT refreshToken = jwtUtils.generateRefreshToken(user);
-        headers.add(refreshTokenHeader, refreshToken.getParsedString());
+        //headers.add(refreshTokenHeader, refreshToken.getParsedString());
 
         SignedJWT jwt = jwtUtils.generateRegularToken(user);
-        headers.add(payloadTokenHeader, String.format("%s.%s", jwt.getParsedParts()[0], jwt.getParsedParts()[1]));
-        headers.add(signatureTokenHeader, jwt.getParsedParts()[2].toString());
+        //headers.add(payloadTokenHeader, String.format("%s.%s", jwt.getParsedParts()[0], jwt.getParsedParts()[1]));
+        //headers.add(signatureTokenHeader, jwt.getParsedParts()[2].toString());
 
         // HttpServletRequest actualRequest = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+
+        response.addCookie(createCookie(refreshTokenHeader, refreshToken.getParsedString()));
+        response.addCookie(createCookie(payloadTokenHeader, String.format("%s.%s", jwt.getParsedParts()[0], jwt.getParsedParts()[1])));
+        response.addCookie(createCookie(signatureTokenHeader, jwt.getParsedParts()[2].toString()));
 
         UserDto userDto = UserMapper.MAPPER.toDTO(user).toBuilder()
             .tokenExpires(dateToLocalDateTime(jwt.getJWTClaimsSet().getExpirationTime()))
             .refreshExpires(dateToLocalDateTime(refreshToken.getJWTClaimsSet().getExpirationTime()))
             .build();
 
-        return Constructor.buildResponseHeaders(HttpStatus.OK, userDto, headers);
+        return Constructor.buildResponse(HttpStatus.OK, userDto);
     }
 
     private void validateUserEnabled(User user) {
@@ -115,6 +120,15 @@ public class AuthController {
             tokenRepository.deleteAllTokensFromUser(user.getId());
             throw new RequestException(HttpStatus.UNAUTHORIZED, Messages.ErrorClient.USER_NOT_ENABLED);
         }
+    }
+
+    private Cookie createCookie(String key, String value) {
+        var cookie = new Cookie(key, value);
+        cookie.setMaxAge(7 * 24 * 60 * 60);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/api/v1");
+        return cookie;
     }
 
 }
