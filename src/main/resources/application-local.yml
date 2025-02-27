@@ -5,19 +5,19 @@ spring:
       connectionTimeout: 20000
       maximumPoolSize: 5
     driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb #memory
-    # url: jdbc:h2:file:/data/demo #local
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL; #memory
+    # connectivity at jdbc:h2:tcp://localhost:8081/mem:testdb;MODE=PostgreSQL;
+    # check H2ServerConfig (bean only initialized when spring.profiles include local)
     username: myuser
     password: mypassword
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: ${DB_START_MODE:none}
-      # naming.implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
     properties:
       hibernate:
-        format_sql: ${SHOW_SQL:false} # true for format the queries (requires show_sql to true)
-        show_sql: ${SHOW_SQL:false}
+        format_sql: ${SHOW_SQL:true} # true for format the queries (requires show_sql to true)
+        show_sql: ${SHOW_SQL:true}
     defer-datasource-initialization: true # load schema from entities
     show-sql: false # show sql queries formatted (true for formatted, requires spring.jpa.properties.hibernate.show_sql and spring.jpa.properties.hibernate.format_sql)
     database-platform: org.hibernate.dialect.H2Dialect
