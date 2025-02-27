@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static app.ipreach.backend.shared.validation.Endpoint.isNotReplaceTokenEndpoint;
@@ -56,7 +57,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
         throws ServletException, IOException {
 
-        var cookiesMap = Arrays.stream(request.getCookies())
+        var cookiesMap = Optional.ofNullable(request.getCookies())
+            .stream().flatMap(Arrays::stream)
             .collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
 
         String jwtHeaderPayload = cookiesMap.get(payloadTokenHeader);
@@ -88,6 +90,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         final String authorization = "Authorization";
         request.setAttribute(authorization, jwt);
+
         if (isTokenEndpoint(request.getMethod(), request.getRequestURI())) {
             response.setHeader(payloadTokenHeader, jwtHeaderPayload);
             response.setHeader(signatureTokenHeader, jwtSignature);
