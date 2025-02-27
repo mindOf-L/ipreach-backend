@@ -40,10 +40,6 @@ public class Token {
 
     @NotNull
     @Column(updatable = false, nullable = false)
-    private Long userId;
-
-    @NotNull
-    @Column(updatable = false, nullable = false)
     private LocalDateTime expiresAt;
 
     @NotNull
@@ -65,10 +61,6 @@ public class Token {
 
     @NotNull
     @Column(updatable = false, nullable = false)
-    private boolean termsSignedAndActive;
-
-    @NotNull
-    @Column(updatable = false, nullable = false)
     @Enumerated(EnumType.STRING)
     private ETokenType tokenType;
 
@@ -79,5 +71,13 @@ public class Token {
 
     @Transient
     private SignedJWT signedJWT;
+
+    @NotNull
+    @Column(updatable = false, nullable = false)
+    private Long userId;
+
+    @NotNull
+    @Column(updatable = false, nullable = false)
+    private boolean userEnabled;
 
 }
