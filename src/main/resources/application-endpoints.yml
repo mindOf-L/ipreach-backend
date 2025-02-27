@@ -27,6 +27,7 @@ exempted:
 nonToken:
   GET:
   POST:
+    - /api/v1/auth/login
   PUT:
   PATCH:
   DELETE:
