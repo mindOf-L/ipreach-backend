@@ -131,19 +131,24 @@ public class AuthController {
     }
 
     private Cookie createCookie(String key, String value) {
-        var cookie = new Cookie(key, value);
+        var cookie = getRegularCookie(key, value);
         cookie.setMaxAge(24 * 60 * 60);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/api/v1");
         return cookie;
     }
 
     private Cookie deleteCookie(String key) {
-        var cookie = new Cookie(key, null);
+        var cookie = getRegularCookie(key, null);
         cookie.setMaxAge(0);
+        return cookie;
+    }
+
+    @Value("${server.servlet.session.cookie.secure}")
+    private boolean securedCookies;
+
+    private Cookie getRegularCookie(String key, String value) {
+        var cookie = new Cookie(key, value);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(securedCookies);
         cookie.setPath("/api/v1");
         return cookie;
     }

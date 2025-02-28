@@ -29,6 +29,12 @@ spring:
 server:
   port: ${TOMCAT_PORT:8080}
 
+# ---- COOKIES ----
+  servlet:
+    session:
+      cookie:
+        secure: ${COOKIES_SECURE:false}
+
 # ---- LOGGING ----
 logging:
   level:
@@ -43,3 +49,4 @@ logging:
 refresh-token-header: x-refresh-token
 payload-token-header: x-header-payload-token
 signature-token-header: x-signature-token
+
