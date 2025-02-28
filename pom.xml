@@ -176,7 +176,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>app.ipreach.bot.IPreachBotJApplication</mainClass>
+                            <mainClass>app.ipreach.backend.IPreachBackend</mainClass>
                         </configuration>
                     </execution>
                 </executions>
