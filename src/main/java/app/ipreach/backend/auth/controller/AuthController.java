@@ -46,6 +46,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class AuthController {
 
+    public static final String SAME_SITE_COOKIE_ATTRIBUTE = "SameSite";
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
@@ -60,6 +61,10 @@ public class AuthController {
 
     @Value("${signature-token-header}")
     private String signatureTokenHeader;
+    @Value("${server.servlet.session.cookie.secure}")
+    private boolean securedCookies;
+    @Value("${server.servlet.session.cookie.sameSite}")
+    private String sameSiteValue;
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto, HttpServletResponse response) throws ParseException, JOSEException {
@@ -142,12 +147,12 @@ public class AuthController {
         return cookie;
     }
 
-    @Value("${server.servlet.session.cookie.secure}")
-    private boolean securedCookies;
+
 
     private Cookie getRegularCookie(String key, String value) {
         var cookie = new Cookie(key, value);
         cookie.setHttpOnly(true);
+        cookie.setAttribute(SAME_SITE_COOKIE_ATTRIBUTE, sameSiteValue);
         cookie.setSecure(securedCookies);
         cookie.setPath("/api/v1");
         return cookie;

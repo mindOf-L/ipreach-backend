@@ -34,6 +34,7 @@ server:
     session:
       cookie:
         secure: ${COOKIES_SECURE:false}
+        sameSite: ${COOKIES_SAME_SITE:strict}
 
 # ---- LOGGING ----
 logging:
