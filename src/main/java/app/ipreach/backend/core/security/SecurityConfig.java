@@ -83,6 +83,7 @@ public class SecurityConfig {
         config.setAllowedHeaders(Security.getAllowedHeaders());
         config.setAllowedMethods(Security.getAllowedMethods());
         config.setExposedHeaders(Security.getExposedHeaders());
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
