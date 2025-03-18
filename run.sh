@@ -5,7 +5,7 @@ if [ -z "$1" ]; then
       ***************************************************************************************************
       | iPreach commands | Description                                                                  |
       ***************************************************************************************************
-      | → create-local   | Build and launch project withou Docker                                       |
+      | → create-local   | Build and launch project without Docker (it uses an h2 inmemory db)          |
       | → create         | Build and launch project without API, just dependencies of the backend (API) |
       | → restart        | Just launch project without API, just dependencies of the backend (API)      |
       | → create-api     | Build and launch project with API, just dependencies of the backend (API)    |
@@ -17,10 +17,8 @@ fi
 
 case "$1" in
   create-local)
-    LOAD_INITIAL_DATA=true
-    DB_START_MODE=create
     mvn clean install -DskipTests
-    mvn spring-boot:run
+    LOAD_INITIAL_DATA=true DB_START_MODE=create mvn spring-boot:run
     exit 1
     ;;
 esac
