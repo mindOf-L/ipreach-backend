@@ -14,6 +14,7 @@ import org.apache.commons.lang3.RandomUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static app.ipreach.backend.shared.constants.DateTimePatterns.MONROVIA;
@@ -80,6 +81,12 @@ public class FakeClass {
             .build();
     }
 
+    public static ShiftDto giveMeShiftWithAssignment() {
+        return giveMeShift().toBuilder()
+            .assignments(giveMeAssignment(null))
+            .build();
+    }
+
     public static ShiftDto giveMeShiftWithAssignment(long shiftId) {
         ShiftDto shiftDto = giveMeShift(shiftId);
 
@@ -88,7 +95,7 @@ public class FakeClass {
             .build();
     }
 
-    public static ShiftAssignmentDto giveMeAssignment(long shiftId) {
+    public static ShiftAssignmentDto giveMeAssignment(Long shiftId) {
         List<UserDto> participants = new ArrayList<>();
 
         for (int i = 0; i < RandomUtils.secure().randomInt(2, 5); i++) {
@@ -101,7 +108,7 @@ public class FakeClass {
 
         return ShiftAssignmentDto.builder()
             .id(RandomUtils.secure().randomLong())
-            .shiftId(shiftId)
+            .shiftId(Optional.ofNullable(shiftId).orElse(RandomUtils.secure().randomLong()))
             .participants(participants)
             .build();
     }

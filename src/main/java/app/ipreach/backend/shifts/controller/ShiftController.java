@@ -49,7 +49,10 @@ public class ShiftController {
     ) {
 
         var location = giveMeLocation().toBuilder().id(locationId).build();
-        var shifts = getRandomList(FakeClass::giveMeShift).stream()
+        var shifts = getRandomList(detailed
+            ? FakeClass::giveMeShiftWithAssignment
+            : FakeClass::giveMeShift)
+            .stream()
             .map(shift -> {
                 LocalDate shiftThisDate = null;
                 if (date != null) shiftThisDate = date;
