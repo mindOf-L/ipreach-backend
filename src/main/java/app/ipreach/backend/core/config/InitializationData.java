@@ -40,6 +40,7 @@ public class InitializationData {
         if (!loadInitialData) return null;
 
         return () -> {
+            log.info("Initializing database...💿");
             if(driverClassName.equals("org.postgresql.Driver")) {
                 // execute when changing database version
                 jdbcTemplate.execute("ALTER DATABASE \"%s\" REFRESH COLLATION VERSION;".formatted(dbName));
