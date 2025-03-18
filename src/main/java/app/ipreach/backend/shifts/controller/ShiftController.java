@@ -2,8 +2,10 @@ package app.ipreach.backend.shifts.controller;
 
 import app.ipreach.backend.shared.constants.Messages;
 import app.ipreach.backend.shared.creation.FakeClass;
-import app.ipreach.backend.users.payload.dto.ShiftDto;
+import app.ipreach.backend.shifts.payload.dto.ShiftDto;
+import app.ipreach.backend.shifts.service.ShiftService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,7 +25,7 @@ import java.util.List;
 
 import static app.ipreach.backend.shared.creation.Constructor.buildResponse;
 import static app.ipreach.backend.shared.creation.FakeClass.giveMeLocation;
-import static app.ipreach.backend.shared.creation.FakeClass.giveMeShift;
+import static app.ipreach.backend.shared.creation.FakeClass.giveMeShiftWithAssignment;
 import static app.ipreach.backend.shared.creation.Generator.getRandomIntegerFromRange;
 import static app.ipreach.backend.shared.creation.Generator.getRandomList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -32,8 +34,11 @@ import static org.springframework.http.HttpStatus.OK;
 @Slf4j
 @Controller
 @RequestMapping("/shifts")
+@RequiredArgsConstructor
 @Tag(name = "Shifts", description = "Shift methods to create, list and filter")
 public class ShiftController {
+
+    private final ShiftService shiftService;
 
     @GetMapping
     public ResponseEntity<?> listShifts(
@@ -63,7 +68,7 @@ public class ShiftController {
 
     @GetMapping("/{shiftId}")
     public ResponseEntity<?> getShift(@PathVariable Integer shiftId) {
-        return buildResponse(OK, giveMeShift(shiftId));
+        return buildResponse(OK, giveMeShiftWithAssignment(shiftId));
     }
 
     @PostMapping()

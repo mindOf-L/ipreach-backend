@@ -1,5 +1,6 @@
-package app.ipreach.backend.users.payload.dto;
+package app.ipreach.backend.shifts.payload.dto;
 
+import app.ipreach.backend.users.payload.dto.UserDto;
 import lombok.Builder;
 
 import java.util.List;
@@ -9,7 +10,6 @@ public record ShiftAssignmentDto(
 
     Long id,
     Long shiftId,
-    UserDto user,
-    List<UserDto> partners
+    List<UserDto> participants
 
 ){ }

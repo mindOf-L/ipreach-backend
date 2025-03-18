@@ -2,6 +2,7 @@ package app.ipreach.backend.auth.controller;
 
 import app.ipreach.backend.auth.db.repository.TokenRepository;
 import app.ipreach.backend.auth.payload.dto.LoginDto;
+import app.ipreach.backend.auth.service.AuthService;
 import app.ipreach.backend.core.exception.custom.RequestException;
 import app.ipreach.backend.core.security.jwt.JwtUtils;
 import app.ipreach.backend.core.security.user.CurrentUser;
@@ -41,10 +42,12 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/auth")
 @Tag(name = "Authorization", description = "Authorization methods to login, logout, and password management")
-@RequiredArgsConstructor
 public class AuthController {
+
+    private final AuthService authService;
 
     public static final String SAME_SITE_COOKIE_ATTRIBUTE = "SameSite";
     private final AuthenticationManager authenticationManager;
@@ -55,12 +58,11 @@ public class AuthController {
 
     @Value("${refresh-token-header}")
     private String refreshTokenHeader;
-
     @Value("${payload-token-header}")
     private String payloadTokenHeader;
-
     @Value("${signature-token-header}")
     private String signatureTokenHeader;
+
     @Value("${server.servlet.session.cookie.secure}")
     private boolean securedCookies;
     @Value("${server.servlet.session.cookie.sameSite}")
@@ -146,8 +148,6 @@ public class AuthController {
         cookie.setMaxAge(0);
         return cookie;
     }
-
-
 
     private Cookie getRegularCookie(String key, String value) {
         var cookie = new Cookie(key, value);

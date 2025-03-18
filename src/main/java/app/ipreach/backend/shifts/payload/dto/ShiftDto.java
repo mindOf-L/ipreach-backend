@@ -1,5 +1,6 @@
-package app.ipreach.backend.users.payload.dto;
+package app.ipreach.backend.shifts.payload.dto;
 
+import app.ipreach.backend.locations.payload.dto.LocationDto;
 import app.ipreach.backend.shared.constants.DateTimePatterns;
 import lombok.Builder;
 
@@ -9,12 +10,14 @@ import java.time.LocalDateTime;
 public record ShiftDto(
 
     Long id,
+    Long locationId,
     LocationDto location,
-    Integer slotsOpened,
-    Integer slotsAvailable,
+    String locationName,
     LocalDateTime dateTimeFrom,
     LocalDateTime dateTimeTo,
-    ShiftAssignmentDto assignment
+    Integer slotsOpened,
+    Integer slotsAvailable,
+    ShiftAssignmentDto assignments
 
 ){
     public String details() {

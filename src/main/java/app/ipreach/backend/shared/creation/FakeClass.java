@@ -1,15 +1,19 @@
 package app.ipreach.backend.shared.creation;
 
+import app.ipreach.backend.locations.payload.dto.LocationDto;
 import app.ipreach.backend.shared.enums.ERole;
+import app.ipreach.backend.shared.enums.EShiftUserRole;
 import app.ipreach.backend.shared.enums.EStatus;
-import app.ipreach.backend.users.payload.dto.LocationDto;
-import app.ipreach.backend.users.payload.dto.ShiftDto;
-import app.ipreach.backend.users.payload.dto.ShiftRequestDto;
+import app.ipreach.backend.shifts.payload.dto.ShiftAssignmentDto;
+import app.ipreach.backend.shifts.payload.dto.ShiftDto;
+import app.ipreach.backend.shifts.payload.dto.ShiftRequestDto;
 import app.ipreach.backend.users.payload.dto.UserDto;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static app.ipreach.backend.shared.constants.DateTimePatterns.MONROVIA;
@@ -74,6 +78,36 @@ public class FakeClass {
             .dateTimeFrom(dateTimeFrom)
             .dateTimeTo(dateTimeTo)
             .build();
+    }
+
+    public static ShiftDto giveMeShiftWithAssignment(long shiftId) {
+        ShiftDto shiftDto = giveMeShift(shiftId);
+
+        return shiftDto.toBuilder()
+            .assignments(giveMeAssignment(shiftId))
+            .build();
+    }
+
+    public static ShiftAssignmentDto giveMeAssignment(long shiftId) {
+        List<UserDto> participants = new ArrayList<>();
+
+        for (int i = 0; i < RandomUtils.secure().randomInt(2, 5); i++) {
+            switch (i) {
+                case 0 -> participants.add(giveMeUserWithRole(EShiftUserRole.OVERSEER));
+                case 1 -> participants.add(giveMeUserWithRole(EShiftUserRole.AUXILIAR));
+                default -> participants.add(giveMeUserWithRole(EShiftUserRole.PARTICIPANT));
+            }
+        }
+
+        return ShiftAssignmentDto.builder()
+            .id(RandomUtils.secure().randomLong())
+            .shiftId(shiftId)
+            .participants(participants)
+            .build();
+    }
+
+    private static UserDto giveMeUserWithRole(EShiftUserRole shiftUserRole) {
+        return giveMeUser().toBuilder().shiftUserRole(shiftUserRole).build();
     }
 
     public static ShiftRequestDto giveMeShiftRequest() {

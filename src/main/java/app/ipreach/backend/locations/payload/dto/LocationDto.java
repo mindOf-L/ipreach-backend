@@ -1,9 +1,9 @@
-package app.ipreach.backend.users.payload.dto;
+package app.ipreach.backend.locations.payload.dto;
 
 import lombok.Builder;
 
 @Builder(toBuilder = true)
-public record LocationDto(
+public record LocationDto (
 
     Long id,
     String name,
@@ -11,4 +11,4 @@ public record LocationDto(
     String url,
     String details
 
-){}
+){ }

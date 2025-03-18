@@ -7,7 +7,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.AccessLevel;
@@ -18,6 +20,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
@@ -39,16 +42,20 @@ public class Shift {
     private String locationName;
 
     @Column(nullable = false)
-    private LocalDateTime dateFrom;
+    private LocalDateTime dateTimeFrom;
 
     @Column(nullable = false)
-    private LocalDateTime dateTo;
+    private LocalDateTime dateTimeTo;
 
     @Column(nullable = false)
     private int slotsOpened;
 
     @Column(nullable = false)
     private int slotsAvailable;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shift_assignment_id")
+    private List<ShiftAssignment> assignments;
 
     public String getLocationName() {
         if(StringUtils.isBlank(locationName))

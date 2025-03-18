@@ -1,7 +1,9 @@
-package app.ipreach.backend.users.payload.dto;
+package app.ipreach.backend.shifts.payload.dto;
 
+import app.ipreach.backend.locations.payload.dto.LocationDto;
 import app.ipreach.backend.shared.constants.DateTimePatterns;
 import app.ipreach.backend.shared.enums.EStatus;
+import app.ipreach.backend.users.payload.dto.UserDto;
 import lombok.Builder;
 import org.springframework.util.CollectionUtils;
 
@@ -11,19 +13,21 @@ import static app.ipreach.backend.shared.constants.Messages.Params.GOOGLE_CALEND
 import static app.ipreach.backend.shared.constants.Messages.Params.OUTLOOK_CALENDAR_TEMPLATE;
 import static java.util.stream.Collectors.joining;
 
-@Builder
+@Builder(toBuilder = true)
 public record ShiftRequestDto(
-
     Long id,
-    LocationDto location,
+    Long userId,
     UserDto user,
+    Long shiftId,
     ShiftDto shift,
+    Long locationId,
+    LocationDto location,
+    List<Long> partnerIds,
     List<UserDto> partners,
     int slotsRequested,
     EStatus status
 
-) {
-
+){
     public String detailsOfApproved() {
         final String partners = CollectionUtils.isEmpty(partners())
             ? ""
@@ -55,5 +59,4 @@ public record ShiftRequestDto(
             locationDto.address(),
             locationDto.details());
     }
-
 }

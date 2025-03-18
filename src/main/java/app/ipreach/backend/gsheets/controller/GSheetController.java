@@ -1,6 +1,6 @@
-package app.ipreach.backend.users.controller;
+package app.ipreach.backend.gsheets.controller;
 
-import app.ipreach.backend.users.service.UserService;
+import app.ipreach.backend.gsheets.service.GSheetService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/users")
-@Tag(name = "Users", description = "User CRUD")
-public class UserController {
+@RequestMapping("/auth")
+@Tag(name = "Authorization", description = "GSheet CRUD")
+public class GSheetController {
 
-    private final UserService userService;
+    private final GSheetService gSheetService;
 
 }
