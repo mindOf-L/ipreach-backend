@@ -1,6 +1,31 @@
 n=0
 
-if [ -z "$1" ]; then
+COMMAND="$1"
+shift  # Remove first argument from $@
+
+PORT=8080
+
+#parse command line opts
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --port=*)
+      PORT="${1#*=}"
+      shift
+      ;;
+    --port)
+      PORT="$2"
+      shift 2
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
+
+echo "Command: $COMMAND"
+echo "Using port: $PORT"
+
+if [ -z "$COMMAND" ]; then
   echo "Usage: $0
       ***************************************************************************************************
       | iPreach commands | Description                                                                  |
@@ -15,10 +40,10 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-case "$1" in
+case "$COMMAND" in
   create-local)
     mvn clean install -DskipTests
-    LOAD_INITIAL_DATA=true DB_START_MODE=create mvn spring-boot:run
+    TOMCAT_PORT=$PORT LOAD_INITIAL_DATA=true DB_START_MODE=create mvn spring-boot:run
     exit 1
     ;;
 esac
@@ -67,7 +92,7 @@ DB_START_MODE=none
 LOAD_INITIAL_DATA=false
 TEST_DATA=false
 
-case "$1" in
+case "$COMMAND" in
   create|create-api)
     DB_START_MODE=create
     LOAD_INITIAL_DATA=true
@@ -94,8 +119,8 @@ esac
 
 echo "DB start mode = $DB_START_MODE"
 #echo "Load initial data = $LOAD_INITIAL_DATA"
-echo "Docker initialization mode = '$1'"
-case "$1" in
+echo "Docker initialization mode = '$COMMAND'"
+case "$COMMAND" in
   create|restart)
     DB_START_MODE=$DB_START_MODE LOAD_INITIAL_DATA=$LOAD_INITIAL_DATA TEST_DATA=$TEST_DATA docker compose -f docker-compose-no-api.yml up -d
   ;;
@@ -104,7 +129,7 @@ case "$1" in
   ;;
 esac
 
-case "$1" in
+case "$COMMAND" in
   create-api|create-local|restart-api)
     echo "ready to work with API @ http://localhost:8080/api, better from postman hehe"
     echo "check api is alive in http://localhost:8080/api/alive"
