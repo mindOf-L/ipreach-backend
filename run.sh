@@ -90,10 +90,11 @@ docker rmi ipreach-backend-api -f
 
 DB_START_MODE=none
 LOAD_INITIAL_DATA=false
-TEST_DATA=false
+#TEST_DATA=false
 
 case "$COMMAND" in
   create|create-api)
+    purge
     DB_START_MODE=create
     LOAD_INITIAL_DATA=true
     ;;
@@ -103,7 +104,7 @@ case "$COMMAND" in
     ;;
   purge)
     docker compose -f docker-compose-no-api.yml down
-    docker compose -f docker-compose-api.yml down
+    docker compose -f docker-compose.yml down
     docker rmi postgres -f
     docker rmi maildev/maildev -f
     docker rmi ipreach-backend-api -f
@@ -117,15 +118,18 @@ case "$COMMAND" in
     ;;
 esac
 
+JAVA_OPTS="-XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
+
 echo "DB start mode = $DB_START_MODE"
-#echo "Load initial data = $LOAD_INITIAL_DATA"
+echo "Load initial data = $LOAD_INITIAL_DATA"
+
 echo "Docker initialization mode = '$COMMAND'"
 case "$COMMAND" in
   create|restart)
-    DB_START_MODE=$DB_START_MODE LOAD_INITIAL_DATA=$LOAD_INITIAL_DATA TEST_DATA=$TEST_DATA docker compose -f docker-compose-no-api.yml up -d
+    DB_START_MODE=$DB_START_MODE LOAD_INITIAL_DATA=$LOAD_INITIAL_DATA JAVA_OPTS=$JAVA_OPTS docker compose -f docker-compose-no-api.yml up -d
   ;;
   create-api|restart-api)
-    DB_START_MODE=$DB_START_MODE LOAD_INITIAL_DATA=$LOAD_INITIAL_DATA TEST_DATA=$TEST_DATA docker compose -f docker-compose-api.yml up -d
+    DB_START_MODE=$DB_START_MODE LOAD_INITIAL_DATA=$LOAD_INITIAL_DATA JAVA_OPTS=$JAVA_OPTS docker compose -f docker-compose.yml up -d
   ;;
 esac
 

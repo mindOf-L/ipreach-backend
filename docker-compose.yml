@@ -41,7 +41,9 @@ services:
     working_dir: /opt/app
     environment:
       - ENVIRONMENT_PROFILE=docker
-      - JAVA_OPTS=-XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom
+      - DB_START_MODE=${DB_START_MODE}
+      - LOAD_INITIAL_DATA=${LOAD_INITIAL_DATA}
+      - JAVA_OPTS=${JAVA_OPTS}
     networks:
       - ipreach_api_db_network
     depends_on:
