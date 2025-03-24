@@ -15,7 +15,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: create-drop
-      # naming.implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
     properties:
       hibernate:
         format_sql: false # true for format the queries (requires show_sql to true)

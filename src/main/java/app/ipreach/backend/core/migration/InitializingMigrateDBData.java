@@ -3,40 +3,52 @@ package app.ipreach.backend.core.migration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Service
-@Profile("migration")
-public class InitializationData {
+@Component
+@Profile("migration-h2 | migration-pg")
+public class InitializingMigrateDBData {
 
     private final JdbcTemplate remoteJdbcTemplate;
     private final JdbcTemplate localJdbcTemplate;
     private final ShutdownService shutdownService;
 
-    public InitializationData(
+    @Value("${spring.datasource.driverClassName}")
+    private String driverClassName;
+
+    @Value("${DB_NAME:testdb}")
+    private String dbName;
+
+    @Value("${SHUTDOWN_AFTER_MIGRATE:true}")
+    private boolean shutdownAfterMigrate;
+
+    public InitializingMigrateDBData(
         @Qualifier("localDBSource") DataSource localDataSource,
         @Qualifier("remoteDBSource") DataSource remoteDataSource,
-        ShutdownService shutdownService) {
+        ShutdownService shutdownService, ApplicationEventPublisher eventPublisher) {
         this.localJdbcTemplate = new JdbcTemplate(localDataSource);
         this.remoteJdbcTemplate = new JdbcTemplate(remoteDataSource);
         this.shutdownService = shutdownService;
     }
 
     @Bean
-    InitializingBean sendDatabase() {
+    InitializingBean migrateDBData() {
         return () -> {
             //cloneSchema(); // testing create mode in dev
             copyData();
             log.info("Finished cloning DB from remote to local");
-            shutdownService.shutdown();
+            if(shutdownAfterMigrate)
+                shutdownService.shutdown();
         };
     }
 
@@ -70,17 +82,32 @@ public class InitializationData {
     }
 
     private void copyData() {
-        localJdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS unaccent;");
+        log.info("Initializing database...💿");
+
         List<Map<String, Object>> tables = remoteJdbcTemplate.queryForList(
             "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
 
+        if(driverClassName.equals("org.postgresql.Driver")) {
+            // execute when changing database version
+            localJdbcTemplate.execute("ALTER DATABASE \"%s\" REFRESH COLLATION VERSION;".formatted(dbName));
+            // set accent-insensitive on searches
+            localJdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS unaccent;");
+            truncateDataPg(tables);
+        } else if (driverClassName.equals("org.h2.Driver")) {
+            truncateDataH2();
+        }
+
         for (Map<String, Object> table : tables) {
             String tableName = (String) table.get("table_name");
-            localJdbcTemplate.execute("TRUNCATE TABLE \"" + tableName + "\" CASCADE");
             List<Map<String, Object>> rows = remoteJdbcTemplate.queryForList("SELECT * FROM \"" + tableName + "\"");
+            String localTable = (String) localJdbcTemplate
+                .queryForMap("SELECT table_name FROM information_schema.tables WHERE table_schema = 'PUBLIC' and table_name ILIKE '%s' ".formatted(tableName))
+                .get("table_name");
+
+            localJdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
 
             for (Map<String, Object> row : rows) {
-                StringBuilder insertQuery = new StringBuilder("INSERT INTO \"" + tableName + "\" (");
+                StringBuilder insertQuery = new StringBuilder("INSERT INTO \"" + localTable + "\" (");
                 StringBuilder valuesPlaceholder = new StringBuilder(" VALUES (");
                 Object[] values = new Object[row.size()];
                 int i = 0;
@@ -99,9 +126,33 @@ public class InitializationData {
                 localJdbcTemplate.update(insertQuery.toString() + valuesPlaceholder, values);
             }
 
+            localJdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
+
             System.out.println("Data copied on local db table: " + tableName);
         }
+
         log.info("Finished copied data");
+    }
+
+    private void truncateDataPg(List<Map<String, Object>> tables) {
+        for (Map<String, Object> table : tables) {
+            String tableName = (String) table.get("table_name");
+            localJdbcTemplate.execute("TRUNCATE TABLE " + tableName + " CASCADE");
+        }
+    }
+
+    private void truncateDataH2() {
+        localJdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
+
+        var tables = localJdbcTemplate.queryForList(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'PUBLIC'");
+
+        for (Map<String, Object> table : tables) {
+            String tableName = (String) table.get("table_name");
+            localJdbcTemplate.execute("TRUNCATE TABLE \"" + tableName + "\"");
+        }
+
+        localJdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
     }
 
 
