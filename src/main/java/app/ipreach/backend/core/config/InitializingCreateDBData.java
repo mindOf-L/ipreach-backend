@@ -65,9 +65,10 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
             jdbcTemplate.execute("ALTER DATABASE \"%s\" REFRESH COLLATION VERSION;".formatted(dbName));
             // set accent-insensitive on searches
             jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS unaccent;");
+            jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS unaccent;");
         }
 
-        userRepository.save(User.builder()
+        userRepository.saveAndFlush(User.builder()
             .name("admin")
             .email("admin")
             .password(passwordEncoder.encode("admin"))

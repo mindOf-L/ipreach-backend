@@ -126,6 +126,8 @@ public class InitializingMigrateDBData {
                 localJdbcTemplate.update(insertQuery.toString() + valuesPlaceholder, values);
             }
 
+            localJdbcTemplate.execute("ALTER TABLE \"" + localTable + "\" ALTER COLUMN id RESTART WITH (SELECT MAX(id) + 1 FROM \"" + localTable + "\")");
+
             localJdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
 
             System.out.println("Data copied on local db table: " + tableName);
