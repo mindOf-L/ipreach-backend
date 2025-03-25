@@ -11,20 +11,20 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
 
     List<Shift> findByLocationId(long locationId);
 
-    @Query("""
-            SELECT s
-            FROM Shift s
+    @Query(value = """
+            SELECT s.*
+            FROM shifts s
             WHERE
-                s.location.id = :locationId
+                s.location_id = :locationId
             AND (
                  COALESCE(:yearMonth, '') = '' OR
-                 TO_CHAR(s.dateTimeFrom, 'YYYY-MM') = :yearMonth
+                 TO_CHAR(s.date_time_from, 'YYYY-MM') = :yearMonth
                 )
             AND (
                  COALESCE(:date, '') = '' OR
-                 TO_CHAR(s.dateTimeFrom, 'YYYY-MM-DD') = :date
+                 s.date_time_from::timestamp::date = :date
                 )
-            """)
+            """, nativeQuery = true)
     List<Shift> findFiltered(long locationId, String yearMonth, LocalDate date);
 
 }
