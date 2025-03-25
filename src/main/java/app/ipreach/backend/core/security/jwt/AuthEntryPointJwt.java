@@ -10,7 +10,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import java.io.IOException;
 import java.util.UUID;
 
 @Slf4j
@@ -20,7 +19,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex) throws IOException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex) {
 
         MDC.put("petitionId", UUID.randomUUID());
         handlerExceptionResolver.resolveException(request, response, null, ex);

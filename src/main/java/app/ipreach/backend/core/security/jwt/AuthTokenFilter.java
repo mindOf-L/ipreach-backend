@@ -15,12 +15,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import static app.ipreach.backend.shared.validation.Endpoint.isNotReplaceTokenEndpoint;
 import static app.ipreach.backend.shared.validation.Endpoint.isTokenEndpoint;
 import static app.ipreach.backend.shared.validation.Endpoint.nonTokenEndpoint;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Slf4j
 @Component
@@ -40,6 +41,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserDetailsServiceImpl userDetailsService;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
     @Value("${app.auth.jwtExpiration:86400}")
     private int jwtExpiration;
@@ -75,8 +77,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         SignedJWT signedJWT = jwtUtils.getDecodedJwt(jwt);
 
-        if(!jwtUtils.verifyJwt(signedJWT))
-            throw new RequestException(HttpStatus.BAD_REQUEST, Messages.ErrorClient.TOKEN_INVALID);
+        try {
+            if (!jwtUtils.verifyJwt(signedJWT))
+                throw new RequestException(UNAUTHORIZED, Messages.ErrorClient.TOKEN_INVALID);
+        } catch (RequestException ex) {
+            handlerExceptionResolver.resolveException(request, response, null, ex);
+            return;
+        }
 
         String userEmail = jwtUtils.getEmailFromJwtToken(signedJWT);
 

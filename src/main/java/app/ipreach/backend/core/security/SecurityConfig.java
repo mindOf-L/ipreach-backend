@@ -49,7 +49,8 @@ public class SecurityConfig {
         httpSecurity
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
-            .headers(headersConfig -> headersConfig.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+            .headers(headersConfig ->
+                headersConfig.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(Endpoint.getMatchEndpoints()).permitAll()
                 .requestMatchers(Endpoint.getMatchErrors()).permitAll()
@@ -59,8 +60,10 @@ public class SecurityConfig {
             .securityMatcher("/**")
             .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .httpBasic(Customizer.withDefaults())
-            .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .exceptionHandling(config -> config.authenticationEntryPoint(authEntryPointJwt));
+            .sessionManagement(sessionManagement ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(config ->
+                config.authenticationEntryPoint(authEntryPointJwt));
 
         return httpSecurity.build();
     }

@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 import static app.ipreach.backend.shared.conversion.Convert.dateToLocalDateTime;
 import static app.ipreach.backend.shared.process.Hash.hashString;
 import static app.ipreach.backend.shared.process.Threads.runInBackground;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Slf4j
 @Component
@@ -282,7 +283,7 @@ public class JwtUtils {
 
         TokenDto token = tokenRepository.findByTokenHash(hashString(signedJwt.serialize()))
             .map(TokenMapper.MAPPER::toDto)
-            .orElseThrow(() -> new RequestException(HttpStatus.BAD_REQUEST,
+            .orElseThrow(() -> new RequestException(UNAUTHORIZED,
                 String.format(Messages.ErrorClient.THIS_TOKEN_INVALID, signedJwt.serialize())));
 
         String jwkString = new String(Base64.from(token.jwk()).decode());

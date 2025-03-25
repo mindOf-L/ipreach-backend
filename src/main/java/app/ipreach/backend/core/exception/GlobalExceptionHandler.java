@@ -10,6 +10,7 @@ import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logErrorInConsole("RequestException", ex, HttpStatus.BAD_REQUEST, Messages.ErrorClient.RUNTIME_EXCEPTION);
 
         return Constructor.buildResponseHeaders(ex.getHttpStatus(), ex.getData(), ex.getMessage(), new HttpHeaders());
+    }
+
+    @ExceptionHandler(InsufficientAuthenticationException.class)
+    public final ResponseEntity<?> handleRequestExceptions(Exception ex) {
+        return Constructor.buildResponseHeaders(HttpStatus.UNAUTHORIZED, null, ex.getMessage(), new HttpHeaders());
     }
 
     @ExceptionHandler(Exception.class)
