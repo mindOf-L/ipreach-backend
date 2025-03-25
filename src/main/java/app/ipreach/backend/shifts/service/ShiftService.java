@@ -2,6 +2,7 @@ package app.ipreach.backend.shifts.service;
 
 import app.ipreach.backend.core.exception.custom.RequestException;
 import app.ipreach.backend.locations.service.LocationService;
+import app.ipreach.backend.shared.constants.DateTimePatterns;
 import app.ipreach.backend.shared.constants.Messages;
 import app.ipreach.backend.shifts.db.model.Shift;
 import app.ipreach.backend.shifts.db.repository.ShiftRepository;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,10 +64,10 @@ public class ShiftService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getShiftsSummary(String year, String month) {
-        //var shifts = shiftRepository.findSummarized(year, month);
+    public ResponseEntity<?> getShiftsSummary(String yearMonth, long locationId) {
+        var shiftSummaries = shiftRepository.findSummarized(yearMonth, locationId);
 
-        return null;
+        return buildResponse(OK, shiftSummaries, String.format(Messages.Info.SHIFT_SUMMARIES_LISTED, shiftSummaries.size()));
     }
 
     public ResponseEntity<?> createShiftList(List<ShiftDto> shiftsDto) {

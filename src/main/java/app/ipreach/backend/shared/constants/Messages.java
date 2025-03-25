@@ -18,7 +18,9 @@ public class Messages {
 
             SHIFT_CREATED = "Shift created",
             SHIFTS_CREATED = "%s shifts created",
-            SHIFTS_LISTED = "Found %s shifts";
+            SHIFTS_LISTED = "Found %s shifts",
+            SHIFT_SUMMARIES_LISTED = "Found shifts in %s days";
+
     }
 
     public static class Warning {

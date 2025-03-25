@@ -41,9 +41,9 @@ public class ShiftController {
         return shiftService.listShifts(locationId, yearMonth, date, detailed);
     }
 
-    @GetMapping("/summary/{year}/{month}")
-    public ResponseEntity<?> getShiftsSummary(@PathVariable String year, @PathVariable String month) {
-        return shiftService.getShiftsSummary(year, month);
+    @GetMapping("/summary/{yearMonth}")
+    public ResponseEntity<?> getShiftsSummary(@PathVariable String yearMonth, @RequestParam long locationId) {
+        return shiftService.getShiftsSummary(yearMonth, locationId);
     }
 
     @GetMapping("/{shiftId}")
