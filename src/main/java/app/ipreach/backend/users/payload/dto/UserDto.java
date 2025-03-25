@@ -28,7 +28,6 @@ public record UserDto(
     List<ERole> roles,
 
     Boolean approved,
-    Boolean enabled,
 
     EShiftUserRole shiftUserRole,
 
