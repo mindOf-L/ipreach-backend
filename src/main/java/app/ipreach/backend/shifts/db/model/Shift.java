@@ -53,7 +53,7 @@ public class Shift {
     @Column(nullable = false)
     private int slotsAvailable;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "shift_assignment_id")
     private List<ShiftAssignment> assignments;
 
