@@ -35,12 +35,12 @@ public class ShiftService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> listShifts(long locationId, String yearMonth, LocalDate date, boolean detailed) {
-        if(!locationService.locationExists(locationId))
+        if (!locationService.locationExists(locationId))
             throw new RequestException(BAD_REQUEST, Messages.ErrorClient.LOCATION_NOT_FOUND);
 
         List<Shift> shifts = new ArrayList<>();
 
-        if(yearMonth == null && date == null)
+        if (yearMonth == null && date == null)
             shifts.addAll(shiftRepository.findByLocationId(locationId));
         else
             shifts.addAll(shiftRepository.findFiltered(locationId, yearMonth, date));
@@ -59,11 +59,18 @@ public class ShiftService {
         return buildResponse(OK, ShiftMapper.MAPPER.toDto(shift));
     }
 
-    public ResponseEntity<?> createShiftList(List< ShiftDto > shiftsDto) {
-        if(CollectionUtils.isEmpty(shiftsDto))
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getShiftsSummary(String year, String month) {
+        //var shifts = shiftRepository.findSummarized(year, month);
+
+        return null;
+    }
+
+    public ResponseEntity<?> createShiftList(List<ShiftDto> shiftsDto) {
+        if (CollectionUtils.isEmpty(shiftsDto))
             return buildResponse(BAD_REQUEST, Messages.ErrorDev.SHIFT_LIST_NULL_OR_EMPTY, Messages.ErrorClient.ERROR_PROCESSING_DATA);
 
-        if(shiftsDto.size() == 1)
+        if (shiftsDto.size() == 1)
             return buildResponse(NOT_IMPLEMENTED, shiftsDto.getFirst().toBuilder().id(RandomUtils.secure().randomLong()).build(),
                 Messages.Info.SHIFT_CREATED);
 
@@ -72,4 +79,5 @@ public class ShiftService {
             .toList();
         return buildResponse(NOT_IMPLEMENTED, shifts, String.format(Messages.Info.SHIFTS_CREATED, shifts.size()));
     }
+
 }
