@@ -283,8 +283,7 @@ public class JwtUtils {
 
         TokenDto token = tokenRepository.findByTokenHash(hashString(signedJwt.serialize()))
             .map(TokenMapper.MAPPER::toDto)
-            .orElseThrow(() -> new RequestException(UNAUTHORIZED,
-                String.format(Messages.ErrorClient.THIS_TOKEN_INVALID, signedJwt.serialize())));
+            .orElseThrow(() -> new RequestException(UNAUTHORIZED, Messages.ErrorClient.TOKEN_INVALID));
 
         String jwkString = new String(Base64.from(token.jwk()).decode());
 

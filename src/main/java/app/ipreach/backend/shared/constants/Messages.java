@@ -40,7 +40,6 @@ public class Messages {
             USER_NOT_ENABLED = "User not enabled",
 
             TOKEN_INVALID = "Token invalid",
-            THIS_TOKEN_INVALID = "Token invalid: %s",
             TOKEN_NOT_FOUND = "Token not found",
             TOKEN_NOT_PARSEABLE = "Token not parseable",
 
