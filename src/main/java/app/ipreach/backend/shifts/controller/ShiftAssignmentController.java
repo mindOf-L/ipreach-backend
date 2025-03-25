@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static app.ipreach.backend.shared.creation.Constructor.buildResponse;
-import static app.ipreach.backend.shared.creation.FakeClass.giveMeAssignment;
-import static org.springframework.http.HttpStatus.OK;
-
 @Slf4j
 @Controller
 @RequestMapping("/shifts/assignments")
@@ -28,14 +24,12 @@ public class ShiftAssignmentController {
 
     @GetMapping("/{shiftAssignmentId}")
     public ResponseEntity<?> listShifts(@PathVariable long shiftAssignmentId) {
-
-        return buildResponse(OK, giveMeAssignment(shiftAssignmentId));
+        return shiftAssignmentService.listShifts(shiftAssignmentId);
     }
 
     @PostMapping
     public ResponseEntity<?> listShifts(@RequestBody ShiftAssignmentDto shiftAssignmentDto) {
-
-        return buildResponse(OK, giveMeAssignment(shiftAssignmentDto.shiftId()));
+        return shiftAssignmentService.listShifts(shiftAssignmentDto);
     }
 
 }
