@@ -5,6 +5,7 @@ import app.ipreach.backend.users.payload.dto.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -22,5 +23,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
         WHERE u.email = :email
         """, nativeQuery = true)
     UserDto userDetailsByEmail(String email);
+
+    @Query("""
+        SELECT u FROM User u
+        ORDER BY RANDOM()
+        LIMIT :participants
+        """)
+    List<User> giveMeRandomParticipants(int participants);
 
 }

@@ -1,8 +1,12 @@
 package app.ipreach.backend.core.config;
 
 import app.ipreach.backend.shared.enums.ERole;
+import app.ipreach.backend.shared.enums.EShiftUserRole;
+import app.ipreach.backend.shifts.db.model.ShiftAssignment;
+import app.ipreach.backend.shifts.db.repository.ShiftRepository;
 import app.ipreach.backend.users.db.model.User;
 import app.ipreach.backend.users.db.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,6 +30,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
     private final PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
+    private final ShiftRepository shiftRepository;
 
     @Value("${DB_NAME:mydb}")
     private String dbName;
@@ -56,7 +61,8 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
 
     }
 
-    private void createExampleData() {
+    @Transactional
+    public void createExampleData() {
         if (!loadInitialData) return;
 
         log.info("Initializing database...💿");
@@ -75,6 +81,51 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
             .roles(List.of(ERole.ROLE_ADMIN))
             .approved(true)
             .build());
+
+        // full of participants
+        var fullShift = shiftRepository.findShiftById(1L).orElseThrow(() -> new RuntimeException("Shift not found"));
+
+        var usersFullShift = userRepository.giveMeRandomParticipants(4);
+
+        for (int i = 0; i < usersFullShift.size(); i++) {
+            switch (i) {
+                case 0 -> fullShift.getAssignments().add(ShiftAssignment.builder()
+                    .shiftId(fullShift.getId())
+                    .user(usersFullShift.get(i))
+                    .shiftUserRole(EShiftUserRole.OVERSEER)
+                    .build());
+                case 1 -> fullShift.getAssignments().add(ShiftAssignment.builder()
+                    .shiftId(fullShift.getId())
+                    .user(usersFullShift.get(i))
+                    .shiftUserRole(EShiftUserRole.AUXILIAR)
+                    .build());
+                default -> fullShift.getAssignments().add(ShiftAssignment.builder()
+                    .shiftId(fullShift.getId())
+                    .user(usersFullShift.get(i))
+                    .shiftUserRole(EShiftUserRole.PARTICIPANT)
+                    .build());
+            }
+        }
+        shiftRepository.saveAndFlush(fullShift);
+        // partial filled with participants
+        shiftRepository.findShiftById(2L).orElseThrow(() -> new RuntimeException("Shift not found"));
+
+        usersFullShift = userRepository.giveMeRandomParticipants(2);
+
+        for (int i = 0; i < usersFullShift.size(); i++) {
+            switch (i) {
+                case 0 -> fullShift.getAssignments().add(ShiftAssignment.builder()
+                    .shiftId(fullShift.getId())
+                    .user(usersFullShift.get(i))
+                    .shiftUserRole(EShiftUserRole.OVERSEER)
+                    .build());
+                default -> fullShift.getAssignments().add(ShiftAssignment.builder()
+                    .shiftId(fullShift.getId())
+                    .user(usersFullShift.get(i))
+                    .shiftUserRole(EShiftUserRole.PARTICIPANT)
+                    .build());
+            }
+        }
 
         log.info("Complete DB initialization 💿");
     }
