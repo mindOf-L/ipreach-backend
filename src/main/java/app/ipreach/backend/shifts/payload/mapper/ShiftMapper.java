@@ -19,7 +19,8 @@ public interface ShiftMapper {
     @Mapping(target = "locationId", source = "location.id")
     ShiftDto toDto(Shift shift);
 
-    @Mapping(target = "assignments", source = ".", qualifiedByName = "mapAssignmentsToDto")
+    @Mapping(target = "assignments", source = "shift", qualifiedByName = "mapAssignmentsToDto")
+    @Mapping(target = "location", ignore = true)
     @Mapping(target = "locationId", source = "location.id")
     ShiftDto toDtoWithAssignments(Shift shift);
 
@@ -28,7 +29,7 @@ public interface ShiftMapper {
         var participants = shift.getAssignments()
             .stream()
             .map(shiftAssignment ->
-                UserMapper.MAPPER.toDTO(shiftAssignment.getUser())
+                UserMapper.MAPPER.toDtoForAssignment(shiftAssignment.getUser())
                     .toBuilder()
                     .shiftUserRole(shiftAssignment.getShiftUserRole())
                     .build()

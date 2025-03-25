@@ -23,6 +23,16 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     UserDto toDTO(User user);
 
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "botId", ignore = true)
+    @Mapping(target = "botName", ignore = true)
+    @Mapping(target = "botPhone", ignore = true)
+    @Mapping(target = "phone2", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "approved", ignore = true)
+    @Mapping(target = "congregation", ignore = true)
+    UserDto toDtoForAssignment(User user);
+
     @BeanMapping(nullValuePropertyMappingStrategy = IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "password", target = "password", qualifiedByName = "mapPasswordToEncryptedPassword")
