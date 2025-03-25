@@ -34,7 +34,7 @@ public class ShiftService {
     private final LocationService locationService;
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> listShifts(long locationId, String yearMonth, LocalDate date, boolean detailed) {
+    public ResponseEntity<?> listShifts(long locationId, YearMonth yearMonth, LocalDate date, boolean detailed) {
         if (!locationService.locationExists(locationId))
             throw new RequestException(BAD_REQUEST, Messages.ErrorClient.LOCATION_NOT_FOUND);
 
@@ -42,8 +42,10 @@ public class ShiftService {
 
         if (yearMonth == null && date == null)
             shifts.addAll(shiftRepository.findByLocationId(locationId));
+        else if(yearMonth != null)
+            shifts.addAll(shiftRepository.findFiltered(locationId, yearMonth.format(DateTimePatterns.YEAR_MONTH_DASHED), null));
         else
-            shifts.addAll(shiftRepository.findFiltered(locationId, yearMonth, date));
+            shifts.addAll(shiftRepository.findFiltered(locationId, null, date.format(DateTimePatterns.DATE_PATTERN_DASHED)));
 
         var shiftDtos = shifts.stream()
             .map(detailed ? ShiftMapper.MAPPER::toDtoWithAssignments : ShiftMapper.MAPPER::toDto)

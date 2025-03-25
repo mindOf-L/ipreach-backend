@@ -4,7 +4,6 @@ import app.ipreach.backend.shifts.db.model.Shift;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface ShiftRepository extends JpaRepository<Shift, Long> {
@@ -16,15 +15,19 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             FROM shifts s
             WHERE
                 s.location_id = :locationId
-            AND (
-                 COALESCE(:yearMonth, '') = '' OR
-                 TO_CHAR(s.date_time_from, 'YYYY-MM') = :yearMonth
-                )
-            AND (
-                 COALESCE(:date, '') = '' OR
-                 s.date_time_from::timestamp::date = :date
-                )
+            AND
+                CASE
+                   WHEN :yearMonth IS NOT NULL
+                   THEN TO_CHAR(s.date_time_from, 'YYYY-MM') = :yearMonth
+                   ELSE TRUE
+                END
+            AND
+                CASE
+                   WHEN :localDate IS NOT NULL
+                   THEN TO_CHAR(s.date_time_from, 'YYYY-MM-DD') = :localDate
+                   ELSE TRUE
+                END
             """, nativeQuery = true)
-    List<Shift> findFiltered(long locationId, String yearMonth, LocalDate date);
+    List<Shift> findFiltered(long locationId, String yearMonth, String localDate);
 
 }

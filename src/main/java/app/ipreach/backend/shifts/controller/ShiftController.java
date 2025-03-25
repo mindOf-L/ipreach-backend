@@ -1,6 +1,5 @@
 package app.ipreach.backend.shifts.controller;
 
-import app.ipreach.backend.shared.constants.DateTimePatterns;
 import app.ipreach.backend.shifts.payload.dto.ShiftDto;
 import app.ipreach.backend.shifts.service.ShiftService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,11 +38,7 @@ public class ShiftController {
         // don't allow yearMonth and date to
         if(yearMonth != null && date != null) yearMonth = null;
 
-        var yearMonthString = yearMonth != null
-            ? yearMonth.format(DateTimePatterns.YEAR_MONTH_DASHED)
-            : null;
-
-        return shiftService.listShifts(locationId, yearMonthString, date, detailed);
+        return shiftService.listShifts(locationId, yearMonth, date, detailed);
     }
 
     @GetMapping("/summary/{year}/{month}")
