@@ -46,6 +46,9 @@ public class Messages {
 
             ERROR_TOKEN_NOT_PROVIDED = "Please provide auth token",
 
+            LOCATION_NOT_FOUND = "Location not found",
+            SHIFT_NOT_FOUND = "Shift not found",
+
             ERROR_CALLING_API = "Error calling API",
 
             ERROR_PROCESSING_DATA = "Error processing data",

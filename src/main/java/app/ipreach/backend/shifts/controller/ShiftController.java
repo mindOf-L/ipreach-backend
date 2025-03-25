@@ -1,5 +1,6 @@
 package app.ipreach.backend.shifts.controller;
 
+import app.ipreach.backend.shared.constants.DateTimePatterns;
 import app.ipreach.backend.shifts.payload.dto.ShiftDto;
 import app.ipreach.backend.shifts.service.ShiftService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,16 +32,22 @@ public class ShiftController {
     @GetMapping
     public ResponseEntity<?> listShifts(
         @RequestParam long locationId,
-        @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM") YearMonth month,
+        @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM") YearMonth yearMonth,
         @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date,
         @RequestParam(required = false) boolean detailed
     ) {
+        // don't allow yearMonth and date to
+        if(yearMonth != null && date != null) yearMonth = null;
 
-        return shiftService.listShifts(locationId, month, date, detailed);
+        var yearMonthString = yearMonth != null
+            ? yearMonth.format(DateTimePatterns.YEAR_MONTH_DASHED)
+            : null;
+
+        return shiftService.listShifts(locationId, yearMonthString, date, detailed);
     }
 
     @GetMapping("/{shiftId}")
-    public ResponseEntity<?> getShift(@PathVariable Integer shiftId) {
+    public ResponseEntity<?> getShift(@PathVariable Long shiftId) {
         return shiftService.getShift(shiftId);
     }
 

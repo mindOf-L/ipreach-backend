@@ -23,13 +23,13 @@ public class ShiftAssignmentController {
     private final ShiftAssignmentService shiftAssignmentService;
 
     @GetMapping("/{shiftAssignmentId}")
-    public ResponseEntity<?> listShifts(@PathVariable long shiftAssignmentId) {
-        return shiftAssignmentService.listShifts(shiftAssignmentId);
+    public ResponseEntity<?> getShiftAssignments(@PathVariable long shiftAssignmentId) {
+        return shiftAssignmentService.getShiftAssignments(shiftAssignmentId);
     }
 
     @PostMapping
-    public ResponseEntity<?> listShifts(@RequestBody ShiftAssignmentDto shiftAssignmentDto) {
-        return shiftAssignmentService.listShifts(shiftAssignmentDto);
+    public ResponseEntity<?> createShiftAssignment(@RequestBody ShiftAssignmentDto shiftAssignmentDto) {
+        return shiftAssignmentService.createShiftAssignment(shiftAssignmentDto);
     }
 
 }
