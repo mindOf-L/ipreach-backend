@@ -33,7 +33,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
 
     @Query(value = """
         SELECT
-            date(s.date_time_from) as shiftsDate,
+            cast(s.date_time_from as date) as shiftsDate,
             count(to_char(date_time_from, 'YYYY-MM-DD'))::int as shiftsRegistered,
             count(*) filter(where s.slots_available > 0)::int as shiftsAvailable
         FROM shifts s
