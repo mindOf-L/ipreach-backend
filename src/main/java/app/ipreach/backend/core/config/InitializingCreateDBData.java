@@ -49,7 +49,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
     @DependsOn("migrateDBData")
     public InitializingBean createDBDataAfterMigration() {
         log.info("Starting database initialization (stage 2, after migration)...");
-        return () -> createExampleData();
+        return this::createExampleData;
     }
 
     // Execute directly if migration profile is not active
@@ -66,7 +66,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
             jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS unaccent;");
         }
 
-        return () -> createExampleData();
+        return this::createExampleData;
     }
 
     private void createExampleData() {
