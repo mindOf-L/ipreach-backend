@@ -83,7 +83,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
             .build());
 
         // full of participants
-        var fullShift = shiftRepository.findShiftById(1L).orElseThrow(() -> new RuntimeException("Shift not found"));
+        var fullShift = shiftRepository.findById(1L).orElseThrow(() -> new RuntimeException("Shift not found"));
 
         var usersFullShift = userRepository.giveMeRandomParticipants(4);
 
@@ -99,7 +99,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
 
         shiftRepository.saveAndFlush(fullShift);
         // partial filled with participants
-        var partialShift = shiftRepository.findShiftById(2L).orElseThrow(() -> new RuntimeException("Shift not found"));
+        var partialShift = shiftRepository.findById(2L).orElseThrow(() -> new RuntimeException("Shift not found"));
 
         var usersPartialShift = userRepository.giveMeRandomParticipants(2);
 

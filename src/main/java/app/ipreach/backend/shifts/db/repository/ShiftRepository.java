@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ShiftRepository extends JpaRepository<Shift, Long> {
 
@@ -31,8 +30,6 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
                 END
             """, nativeQuery = true)
     List<Shift> findFiltered(long locationId, String yearMonth, String localDate);
-
-    Optional<Shift> findShiftById(long id);
 
     @Query(value = """
         SELECT
