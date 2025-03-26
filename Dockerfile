@@ -10,7 +10,7 @@ RUN mvn package -DskipTests
 #java
 FROM ghcr.io/graalvm/jdk-community:23 as backend
 ENV JAVA_OPTS "-XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
-ARG JAR_FILE=ipreach-bot-j.jar
+ARG JAR_FILE=ipreach-backend.jar
 
 ENV APP_HOME /opt/app
 WORKDIR $APP_HOME
