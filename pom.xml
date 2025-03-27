@@ -16,29 +16,29 @@
 
     <properties>
         <!-- build -->
-        <java.version>23</java.version>
-        <maven-compiler.version>3.13.0</maven-compiler.version>
-        <spring-boot.version>3.4.2</spring-boot.version>
+        <java.version>24</java.version>
+        <maven-compiler.version>3.14.0</maven-compiler.version>
+        <spring-boot.version>3.4.4</spring-boot.version>
         <!-- encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- db -->
         <postgresql.version>42.7.5</postgresql.version>
         <!-- security + oauth -->
-        <nimbus.version>10.0.1</nimbus.version>
-        <tink.version>1.16.0</tink.version>
+        <nimbus.version>10.0.2</nimbus.version>
+        <tink.version>1.17.0</tink.version>
         <bouncy-castle.version>1.80</bouncy-castle.version>
         <!-- map -->
         <lombok.version>1.18.36</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
         <!-- util -->
-        <guava.version>33.4.0-jre</guava.version>
+        <guava.version>33.4.6-jre</guava.version>
         <!-- doc -->
-        <openapi.version>2.8.4</openapi.version>
+        <openapi.version>2.8.6</openapi.version>
         <!-- test -->
-        <podam.version>2.4.2</podam.version>
-        <junit-platform-suite.version>1.11.4</junit-platform-suite.version>
+        <datafaker.version>2.4.2</datafaker.version>
+        <!--<junit-platform-suite.version>1.11.4</junit-platform-suite.version>-->
     </properties>
 
     <dependencies>
@@ -145,7 +145,7 @@
         <dependency>
             <groupId>net.datafaker</groupId>
             <artifactId>datafaker</artifactId>
-            <version>${podam.version}</version>
+            <version>${datafaker.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -158,12 +158,14 @@
             <version>${spring-security.version}</version>
             <scope>test</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
             <version>${junit-platform-suite.version}</version>
             <scope>test</scope>
         </dependency>
+        -->
 
     </dependencies>
 
