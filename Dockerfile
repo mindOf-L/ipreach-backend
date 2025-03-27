@@ -8,7 +8,7 @@ COPY . /build
 RUN mvn package -DskipTests
 
 #java
-FROM ghcr.io/graalvm/jdk-community:23 as backend
+FROM openjdk:23-jdk-slim as backend
 ENV JAVA_OPTS "-XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
 ARG JAR_FILE=ipreach-backend.jar
 
