@@ -32,7 +32,7 @@ services:
 
   api:
     container_name: ipreach-api
-    image: ghcr.io/graalvm/jdk-community:23
+    image: openjdk:24-jdk-slim
     #build:
     #  context: ./
     #  dockerfile: Dockerfile
