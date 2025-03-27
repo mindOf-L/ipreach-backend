@@ -2,7 +2,7 @@ services:
 
   maven-build:
     container_name: maven-build
-    image: maven:3.9.9-eclipse-temurin-23-alpine
+    image: maven:3.9.9-eclipse-temurin-24-alpine
     volumes:
       - ${M2_DIR:-${HOME}/.m2}:/root/.m2
       - ./:/usr/src/app
