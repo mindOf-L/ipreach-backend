@@ -1,0 +1,70 @@
+services:
+
+  maven-build:
+    container_name: maven-build
+    image: maven:3.9.9-eclipse-temurin-23-alpine
+    volumes:
+      - ${M2_DIR:-${HOME}/.m2}:/root/.m2
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: mvn clean install -DskipTests
+
+  db:
+    image: postgres:17
+    container_name: ipreach-db
+    command: -c 'max_connections=200'
+    restart: always
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=mydb
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    networks:
+      - ipreach_api_db_network
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U myuser -d mydb" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  api:
+    container_name: ipreach-api
+    image: openjdk:24-jdk-slim
+    volumes:
+      - ./target:/opt/app
+    working_dir: /opt/app
+    environment:
+      - ENVIRONMENT_PROFILE=migration-docker
+      - DB_START_MODE=${DB_START_MODE}
+      - LOAD_INITIAL_DATA=${LOAD_INITIAL_DATA}
+      - JAVA_OPTS=${JAVA_OPTS}
+      - DB_HOST_MIGRATION=${DB_HOST_MIGRATION}
+      - DB_PORT_MIGRATION=${DB_PORT_MIGRATION}
+      - DB_NAME_MIGRATION=${DB_NAME_MIGRATION}
+      - DB_USER_MIGRATION=${DB_USER_MIGRATION}
+      - DB_PASS_MIGRATION=${DB_PASS_MIGRATION}
+      - DB_NAME=${DB_NAME}
+      - SHUTDOWN_AFTER_MIGRATE=${SHUTDOWN_AFTER_MIGRATE}
+    networks:
+      - ipreach_api_db_network
+    depends_on:
+      maven-build:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    command: java $JAVA_OPTS -jar /opt/app/ipreach-backend.jar
+    restart: always
+
+networks:
+  ipreach_api_db_network:
+    driver: bridge
+
+volumes:
+  postgresql:
+    name: ipreach_db_volume

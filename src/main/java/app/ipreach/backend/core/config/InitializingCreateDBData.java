@@ -45,7 +45,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
 
     // Execute if migration profile is active
     @Bean
-    @Profile("migration-h2 | migration-pg")
+    @Profile("migration-h2 | migration-pg | migration-docker")
     @DependsOn("migrateDBData")
     public InitializingBean createDBDataAfterMigration() {
         log.info("Starting database initialization (stage 2, after migration)...");
@@ -54,7 +54,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
 
     // Execute directly if migration profile is not active
     @Bean
-    @Profile("!migration-h2 & !migration-pg")
+    @Profile("!migration-h2 & !migration-pg & !migration-docker")
     public InitializingBean createDBDataOnAppReady() {
         // Check if we're in a profile where migration doesn't happen
         log.info("Starting database initialization (unique stage)...");
@@ -82,6 +82,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
             .approved(true)
             .build());
 
+        log.warn("⚠️ This requires previously inserted data on DB ⚠️");
         // full of participants
         var fullShift = shiftRepository.findById(1L).orElseThrow(() -> new RuntimeException("Shift not found"));
 

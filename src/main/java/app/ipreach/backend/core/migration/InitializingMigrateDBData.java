@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-@Profile("migration-h2 | migration-pg")
+@Profile("migration-h2 | migration-pg | migration-docker")
 public class InitializingMigrateDBData {
 
     private final JdbcTemplate remoteJdbcTemplate;

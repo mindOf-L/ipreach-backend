@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
 
 @Configuration
-@Profile("migration-h2 | migration-pg")
+@Profile("migration-h2 | migration-pg | migration-docker")
 public class DataSourceConfig {
 
     // local
