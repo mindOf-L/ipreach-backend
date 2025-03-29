@@ -15,6 +15,10 @@ public interface ShiftMapper {
     ShiftMapper MAPPER = Mappers.getMapper(ShiftMapper.class);
 
     @Mapping(target = "assignments", ignore = true)
+    @Mapping(target = "location.id", source = "locationId")
+    Shift toMo(ShiftDto shift);
+
+    @Mapping(target = "assignments", ignore = true)
     @Mapping(target = "location", ignore = true)
     @Mapping(target = "locationId", source = "location.id")
     ShiftDto toDto(Shift shift);

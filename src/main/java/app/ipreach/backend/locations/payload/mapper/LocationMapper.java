@@ -10,6 +10,8 @@ public interface LocationMapper {
 
     LocationMapper MAPPER = Mappers.getMapper(LocationMapper.class);
 
+    Location toMo(LocationDto location);
+
     LocationDto toDto(Location location);
 
 }

@@ -1,10 +1,13 @@
 package app.ipreach.backend.core.config;
 
+import app.ipreach.backend.locations.db.repository.LocationRepository;
+import app.ipreach.backend.locations.payload.mapper.LocationMapper;
 import app.ipreach.backend.shared.enums.ERole;
 import app.ipreach.backend.shared.enums.EShiftUserRole;
 import app.ipreach.backend.shifts.db.model.ShiftAssignment;
 import app.ipreach.backend.shifts.db.repository.ShiftAssigmentRepository;
 import app.ipreach.backend.shifts.db.repository.ShiftRepository;
+import app.ipreach.backend.shifts.payload.mapper.ShiftMapper;
 import app.ipreach.backend.users.db.model.User;
 import app.ipreach.backend.users.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static app.ipreach.backend.shared.creation.FakeClass.giveMeLocation;
+import static app.ipreach.backend.shared.creation.FakeClass.giveMeShift;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -29,6 +35,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
     private final JdbcTemplate jdbcTemplate;
     private final PasswordEncoder passwordEncoder;
 
+    private final LocationRepository locationRepository;
     private final UserRepository userRepository;
     private final ShiftRepository shiftRepository;
     private final ShiftAssigmentRepository shiftAssignmentRepository;
@@ -74,6 +81,7 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
 
         log.info("Initializing database...💿");
 
+        // user
         userRepository.saveAndFlush(User.builder()
             .name("admin")
             .email("admin")
@@ -81,6 +89,19 @@ public class InitializingCreateDBData { //implements ApplicationListener<Migrati
             .roles(List.of(ERole.ROLE_ADMIN))
             .approved(true)
             .build());
+
+        // locations
+        var location = LocationMapper.MAPPER.toMo(giveMeLocation());
+        location.setId(null);
+        locationRepository.saveAndFlush(location);
+
+        // shifts
+        for (int i = 0; i < 2; i++) {
+            var shift = ShiftMapper.MAPPER.toMo(giveMeShift());
+            shift.setId(null);
+            shift.setLocation(locationRepository.findById(1L).get());
+            shiftRepository.saveAndFlush(shift);
+        }
 
         log.warn("⚠️ This requires previously inserted data on DB ⚠️");
         // full of participants
