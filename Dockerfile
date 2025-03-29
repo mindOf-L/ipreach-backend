@@ -1,5 +1,5 @@
 #maven
-FROM --platform=linux/amd64 maven:3.9.9-eclipse-temurin-24-alpine AS maven
+FROM maven:3.9.9-eclipse-temurin-24-alpine AS maven
 LABEL MAINTAINER="mindOf_L"
 
 WORKDIR /build
@@ -8,7 +8,7 @@ COPY . /build
 RUN mvn package -DskipTests
 
 #java
-FROM --platform=linux/amd64 openjdk:24-jdk-slim as backend
+FROM eclipse-temurin:24-jdk-ubi9-minimal AS backend
 ENV JAVA_OPTS "-XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
 ARG JAR_FILE=ipreach-backend.jar
 
