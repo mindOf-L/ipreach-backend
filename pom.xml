@@ -5,12 +5,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.2</version>
+        <version>3.4.4</version>
         <relativePath/>
     </parent>
+
     <groupId>app</groupId>
     <artifactId>ipreach-backend</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <name>iPreach-backend</name>
     <description>iPreach backend manager for SMPWP</description>
 
@@ -18,7 +19,6 @@
         <!-- build -->
         <java.version>24</java.version>
         <maven-compiler.version>3.14.0</maven-compiler.version>
-        <spring-boot.version>3.4.4</spring-boot.version>
         <!-- encoding -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -174,7 +174,6 @@
             <scope>test</scope>
         </dependency>
         -->
-
     </dependencies>
 
     <build>
@@ -182,7 +181,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
+                <version>${parent.version}</version>
                 <executions>
                     <execution>
                         <configuration>
@@ -217,7 +216,7 @@
                         <path>
                             <groupId>org.springframework.boot</groupId>
                             <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>${spring-boot.version}</version>
+                            <version>${parent.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
