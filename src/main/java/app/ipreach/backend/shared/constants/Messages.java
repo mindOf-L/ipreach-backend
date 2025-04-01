@@ -14,6 +14,10 @@ public class Messages {
             USER_LOGGED = "User logged",
             USER_LOGGED_OUT = "User logged out",
 
+            USER_CREATED = "User created",
+            USER_UPDATED = "User updated",
+            USER_DELETED = "User deleted",
+
             LOCATIONS_LISTED = "Found %s locations",
 
             SHIFT_CREATED = "Shift created",
@@ -40,6 +44,8 @@ public class Messages {
             USER_PARAMETERS_ERROR = "Error in user parameters",
             USER_PASSWORD_DONT_MATCH = "User+password doesn't match",
             USER_NOT_ENABLED = "User not enabled",
+            USER_ADMIN_CANNOT_DELETE_OWN_ACCOUNT = "Admin cannot delete their own account",
+            USER_WITH_THIS_EMAIL_OR_PHONE_EXISTS = "User with this email or phone already exists",
 
             TOKEN_INVALID = "Token invalid",
             TOKEN_NOT_FOUND = "Token not found",

@@ -31,4 +31,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
         """)
     List<User> giveMeRandomParticipants(int participants);
 
+    Boolean existsByEmailOrPhone(String email, String phone);
+
 }
