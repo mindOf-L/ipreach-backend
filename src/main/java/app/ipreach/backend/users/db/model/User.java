@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,12 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+    uniqueConstraints = {@UniqueConstraint(
+        name = "uk_email_password_when_not_null",
+        columnNames = {"email", "password"}
+    )}
+)
 public class User {
 
     @Id
@@ -37,6 +43,7 @@ public class User {
     @Column(updatable = false, nullable = false)
     private Long id;
 
+    @Column(unique = true)
     private String email;
 
     private String password;
