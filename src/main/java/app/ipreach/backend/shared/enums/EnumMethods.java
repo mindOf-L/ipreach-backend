@@ -4,26 +4,40 @@ import java.util.Set;
 
 public interface EnumMethods {
 
+    // object
     default boolean equalsAny(Object... objects) {
         for (Object o : objects)
             if (this == o) return true;
         return false;
     }
 
-    default <E> boolean equalsAny(Set<E> set) {
-        return equalsAny(set.toArray());
+    default boolean notEquals(Object object) {
+        return this != object;
     }
 
     default boolean noneEquals(Object... objects) {
         return !equalsAny(objects);
     }
 
-    default <E> boolean noneEquals(Set<E> set) {
-        return !equalsAny(set);
+    // set
+    default <E> boolean equalsAnyOnSet(Set<E> set) {
+        return equalsAny(set.toArray());
     }
 
-    default boolean notEquals(Object object) {
-        return this != object;
+    default <E> boolean noneEqualsOnSet(Set<E> set) {
+        return !equalsAnyOnSet(set);
+    }
+
+    // array
+
+    default <E> boolean equalsAnyOnArray(E[] array) {
+        for (E element : array)
+            if (this == element) return true;
+        return false;
+    }
+
+    default <E> boolean noneEqualsAnyOnArray(E[] array) {
+        return !equalsAnyOnArray(array);
     }
 
 }
