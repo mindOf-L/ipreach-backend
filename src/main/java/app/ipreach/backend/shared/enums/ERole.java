@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ERole {
+public enum ERole implements EnumMethods {
     DISABLED("DISABLED"),
     ROLE_MOD("MOD"),
     ROLE_USER("USER"),
