@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -19,6 +21,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Component
 @RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class OriginFilter implements Filter {
 
     private final HandlerExceptionResolver handlerExceptionResolver;
@@ -29,7 +32,7 @@ public class OriginFilter implements Filter {
         String referer = ((HttpServletRequest) request).getHeader("Referer");
 
         try {
-            if (ObjectUtils.allNull(origin, referer))
+            if (ObjectUtils.anyNull(origin, referer))
                 throw new RequestException(BAD_REQUEST, nullRequestOriginHeaderError);
         } catch (RequestException ex) {
             handlerExceptionResolver.resolveException((HttpServletRequest) request, (HttpServletResponse) response, null, ex);
