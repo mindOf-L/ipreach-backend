@@ -1,6 +1,6 @@
 package app.ipreach.backend.auth.controller;
 
-import app.ipreach.backend.auth.payload.dto.LoginDto;
+import app.ipreach.backend.auth.payload.dto.CredentialsDto;
 import app.ipreach.backend.auth.service.AuthService;
 import app.ipreach.backend.core.security.user.CurrentUser;
 import app.ipreach.backend.core.security.user.UserDetailsImpl;
@@ -29,8 +29,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto, HttpServletResponse response) throws ParseException, JOSEException {
-        return authService.loginUser(loginDto, response);
+    public ResponseEntity<?> loginUser(@RequestBody CredentialsDto credentialsDto, HttpServletResponse response) throws ParseException, JOSEException {
+        return authService.loginUser(credentialsDto, response);
     }
 
     @PostMapping("/logout")

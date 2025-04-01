@@ -1,7 +1,7 @@
 package app.ipreach.backend.auth.service;
 
 import app.ipreach.backend.auth.db.repository.TokenRepository;
-import app.ipreach.backend.auth.payload.dto.LoginDto;
+import app.ipreach.backend.auth.payload.dto.CredentialsDto;
 import app.ipreach.backend.core.exception.custom.RequestException;
 import app.ipreach.backend.core.security.jwt.JwtUtils;
 import app.ipreach.backend.core.security.user.UserDetailsImpl;
@@ -59,17 +59,17 @@ public class AuthService {
     @Value("${server.servlet.session.cookie.sameSite}")
     private String sameSiteValue;
 
-    public ResponseEntity<?> loginUser(LoginDto loginDto, HttpServletResponse response) throws ParseException, JOSEException {
+    public ResponseEntity<?> loginUser(CredentialsDto credentialsDto, HttpServletResponse response) throws ParseException, JOSEException {
 
-        User userEntity = userService.getUserByEmail(loginDto.email());
+        User userEntity = userService.getUserByEmail(credentialsDto.email());
 
         validateUserEnabled(userEntity);
 
-        if (!passwordEncoder.matches(loginDto.password(), userEntity.getPassword()))
+        if (!passwordEncoder.matches(credentialsDto.password(), userEntity.getPassword()))
             throw new RequestException(HttpStatus.BAD_REQUEST, Messages.ErrorClient.USER_PASSWORD_DONT_MATCH);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            userEntity.getEmail(), loginDto.password(), userEntity.getRolesAuthorities());
+            userEntity.getEmail(), credentialsDto.password(), userEntity.getRolesAuthorities());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
