@@ -1,5 +1,6 @@
 package app.ipreach.backend.core.security;
 
+import app.ipreach.backend.core.security.filter.OriginFilter;
 import app.ipreach.backend.core.security.jwt.AuthEntryPointJwt;
 import app.ipreach.backend.core.security.jwt.AuthTokenFilter;
 import app.ipreach.backend.shared.validation.Endpoint;
@@ -26,6 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +42,7 @@ public class SecurityConfig {
     private final AuthTokenFilter authTokenFilter;
     private final AuthEntryPointJwt authEntryPointJwt;
     private final PasswordEncoder passwordEncoder;
+    private final OriginFilter originFilter;
 
     @Value("${CORS_ORIGIN:*}")
     private String corsOrigins;
@@ -58,6 +61,7 @@ public class SecurityConfig {
                 .requestMatchers(Endpoint.getMatchTest()).permitAll()
                 .anyRequest().authenticated())
             .securityMatcher("/**")
+            .addFilterBefore(originFilter, CorsFilter.class)
             .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(sessionManagement ->
