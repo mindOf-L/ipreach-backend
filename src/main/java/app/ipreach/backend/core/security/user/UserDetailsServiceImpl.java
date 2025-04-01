@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             new RequestException(HttpStatus.NOT_FOUND, Messages.ErrorClient.USER_NOT_FOUND));
 
         Collection<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-            .map(r -> new SimpleGrantedAuthority(r.getRoleName()))
+            .map(r -> new SimpleGrantedAuthority(r.name()))
             .toList();
 
         UserDetails userDetails = User.builder()
