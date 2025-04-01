@@ -5,9 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,7 +20,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ApiHandlerInterceptor implements HandlerInterceptor {
 
-    //private final JwtUtils jwtUtils;
     private UUID petitionID;
     private String petitionHttpMethod;
     private String petitionEndpoint;
@@ -31,22 +28,13 @@ public class ApiHandlerInterceptor implements HandlerInterceptor {
     private String petitionAgent;
     private String petitionOrigin;
 
-    @Value("${refresh-token-header}")
-    private String refreshTokenHeader;
-
-    @Value("${payload-token-header}")
-    private String payloadTokenHeader;
-
-    @Value("${signature-token-header}")
-    private String signatureTokenHeader;
-
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         this.petitionStartTime = LocalDateTime.now();
 
         this.petitionAgent = Optional.ofNullable(request.getHeader("user-agent")).orElse("postman/unknown");
         this.petitionOrigin = Optional.ofNullable(request.getHeader("origin")).orElse("No origin");
 
-        if(MDC.get("petitionId") != null) {
+        if (MDC.get("petitionId") != null) {
             this.petitionID = UUID.fromString(MDC.get("petitionId"));
         } else {
             this.petitionID = UUID.randomUUID();
@@ -65,15 +53,6 @@ public class ApiHandlerInterceptor implements HandlerInterceptor {
             this.petitionStartTime);
 
         MDC.put("petitionEndpoint", this.petitionEndpoint);
-
-        String refreshToken = request.getHeader(refreshTokenHeader);
-        String headerPayload = request.getHeader(payloadTokenHeader);
-        String signature = request.getHeader(signatureTokenHeader);
-
-        if(ObjectUtils.allNotNull(headerPayload, signature)) {
-            //SignedJWT signedJWT = jwtUtils.getDecodedJwt(String.format("%s.%s", headerPayload, signature));
-            //String groupId = ((LinkedTreeMap<?,?>) signedJWT.getJWTClaimsSet().getClaim("userClaims")).get("groupId").toString();
-        }
 
         return true;
     }
