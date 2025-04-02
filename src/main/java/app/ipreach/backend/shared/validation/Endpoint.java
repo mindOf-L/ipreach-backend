@@ -1,9 +1,12 @@
 package app.ipreach.backend.shared.validation;
 
 import app.ipreach.backend.core.config.EndpointProperties;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +18,22 @@ public class Endpoint {
     @Getter private static String[] matchSwagger;
     @Getter private static String[] matchTest;
     @Getter private static String[] matchErrors;
+
+    @Value("${spring.mvc.servlet.path}")
+    private String mvcServletPath;
+
+    private static String mvcServletPathStatic;
+
+    @PostConstruct
+    public void init() {
+        Endpoint.mvcServletPathStatic = this.mvcServletPath;
+    }
+
+    public static String[] getMatchPrefixed(String[] endpoints) {
+        return Arrays.stream(endpoints)
+            .map(e -> String.format("%s%s", mvcServletPathStatic, e))
+            .toArray(String[]::new);
+    }
 
     private static final Map<String, List<String>> exempted = new HashMap<>();
     private static final Map<String, List<String>> nonToken = new HashMap<>();
