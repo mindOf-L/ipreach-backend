@@ -26,6 +26,7 @@ exempted:
 #endpoints which don't return token in headers
 nonToken:
   GET:
+    - /api/v1/test/alive
   POST:
     - /api/v1/auth/login
   PUT:

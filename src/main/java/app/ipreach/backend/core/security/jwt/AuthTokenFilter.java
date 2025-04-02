@@ -59,6 +59,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
         throws ServletException, IOException {
 
+        if (nonTokenEndpoint(request.getMethod(), request.getRequestURI())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         var cookiesMap = Optional.ofNullable(request.getCookies())
             .stream().flatMap(Arrays::stream)
             .collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
@@ -68,7 +73,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String refreshJwt = cookiesMap.get(refreshTokenHeader);
         boolean jwtNotPresent = StringUtils.isBlank(jwtHeaderPayload) || StringUtils.isBlank(jwtSignature);
 
-        if (jwtNotPresent || nonTokenEndpoint(request.getMethod(), request.getRequestURI())) {
+        if (jwtNotPresent) {
             filterChain.doFilter(request, response);
             return;
         }
