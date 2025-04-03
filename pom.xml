@@ -29,8 +29,7 @@
         <tink.version>1.17.0</tink.version>
         <bouncy-castle.version>1.80</bouncy-castle.version>
         <!-- map -->
-        <!--<lombok.version>1.18.36</lombok.version>-->
-        <lombok.version>edge-SNAPSHOT</lombok.version>
+        <lombok.version>1.18.38</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
         <!-- util -->
@@ -41,13 +40,6 @@
         <datafaker.version>2.4.2</datafaker.version>
         <!--<junit-platform-suite.version>1.11.4</junit-platform-suite.version>-->
     </properties>
-
-    <repositories>
-        <repository>
-            <id>projectlombok.org</id>
-            <url>https://projectlombok.org/edge-releases</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <!-- Spring Boot -->
