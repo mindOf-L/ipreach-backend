@@ -31,6 +31,22 @@ public interface UserRepository extends JpaRepository<User, Long> {
         """)
     List<User> giveMeRandomParticipants(int participants);
 
+    @Query(value = """
+            SELECT COUNT(u.*) >= 1
+            FROM users u
+            WHERE
+                CASE
+                   WHEN :email IS NOT NULL
+                   THEN u.email = :email
+                   ELSE FALSE
+                END
+            OR
+                CASE
+                   WHEN :phone IS NOT NULL
+                   THEN u.phone = :phone
+                   ELSE FALSE
+                END
+            """, nativeQuery = true)
     Boolean existsByEmailOrPhone(String email, String phone);
 
 }

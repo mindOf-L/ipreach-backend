@@ -10,7 +10,7 @@ import app.ipreach.backend.shared.creation.Constructor;
 import app.ipreach.backend.users.db.model.User;
 import app.ipreach.backend.users.payload.dto.UserDto;
 import app.ipreach.backend.users.payload.mapper.UserMapper;
-import app.ipreach.backend.users.service.UserService;
+import app.ipreach.backend.users.service.UserRepositoryService;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.SignedJWT;
 import jakarta.servlet.http.Cookie;
@@ -38,14 +38,13 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserService userService;
-
     public static final String SAME_SITE_COOKIE_ATTRIBUTE = "SameSite";
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepositoryService userRepositoryService;
 
     @Value("${refresh-token-header}")
     private String refreshTokenHeader;
@@ -61,7 +60,7 @@ public class AuthService {
 
     public ResponseEntity<?> loginUser(CredentialsDto credentialsDto, HttpServletResponse response) throws ParseException, JOSEException {
 
-        User userEntity = userService.getUserByEmail(credentialsDto.email());
+        User userEntity = userRepositoryService.getUserByEmail(credentialsDto.email());
 
         validateUserEnabled(userEntity);
 
@@ -88,11 +87,25 @@ public class AuthService {
     }
 
     public ResponseEntity<?> getUser(Authentication authentication) {
-        var user = userService.getUserByEmail(authentication.getName());
+        var user = userRepositoryService.getUserByEmail(authentication.getName());
         return buildResponse(OK, UserMapper.MAPPER.toDTO(user));
     }
 
     private ResponseEntity<?> setToken(User user, HttpServletResponse response) throws ParseException, JOSEException {
+        var userDtoWithToken = createToken(user, response);
+        return Constructor.buildResponse(HttpStatus.OK, userDtoWithToken);
+    }
+
+    public void revokeAuthentication(User user) {
+        tokenRepository.deleteAllTokensFromUser(user.getId());
+    }
+
+    public UserDto renewAuthentication(User user, HttpServletResponse response) throws ParseException, JOSEException {
+        tokenRepository.deleteAllTokensFromUser(user.getId());
+        return createToken(user, response);
+    }
+
+    public UserDto createToken(User user, HttpServletResponse response) throws ParseException, JOSEException {
         //HttpHeaders headers = new HttpHeaders();
 
         SignedJWT refreshToken = jwtUtils.generateRefreshToken(user);
@@ -108,12 +121,10 @@ public class AuthService {
         response.addCookie(createCookie(payloadTokenHeader, String.format("%s.%s", jwt.getParsedParts()[0], jwt.getParsedParts()[1])));
         response.addCookie(createCookie(signatureTokenHeader, jwt.getParsedParts()[2].toString()));
 
-        UserDto userDto = UserMapper.MAPPER.toDTO(user).toBuilder()
+        return UserMapper.MAPPER.toDTO(user).toBuilder()
             .tokenExpires(dateToLocalDateTime(jwt.getJWTClaimsSet().getExpirationTime()))
             .refreshExpires(dateToLocalDateTime(refreshToken.getJWTClaimsSet().getExpirationTime()))
             .build();
-
-        return Constructor.buildResponse(HttpStatus.OK, userDto);
     }
 
     private void validateUserEnabled(User user) {

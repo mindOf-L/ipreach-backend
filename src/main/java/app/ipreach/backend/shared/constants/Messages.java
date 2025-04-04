@@ -46,6 +46,7 @@ public class Messages {
             USER_NOT_ENABLED = "User not enabled",
             USER_ADMIN_CANNOT_DELETE_OWN_ACCOUNT = "Admin cannot delete their own account",
             USER_WITH_THIS_EMAIL_OR_PHONE_EXISTS = "User with this email or phone already exists",
+            USER_WITH_THIS_EMAIL_TAKEN = "This email is already taken",
 
             TOKEN_INVALID = "Token invalid",
             TOKEN_NOT_FOUND = "Token not found",

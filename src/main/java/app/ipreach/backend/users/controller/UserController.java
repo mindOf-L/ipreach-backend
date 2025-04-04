@@ -7,7 +7,9 @@ import app.ipreach.backend.core.security.user.UserDetailsImpl;
 import app.ipreach.backend.shared.constants.Messages;
 import app.ipreach.backend.users.payload.dto.UserDto;
 import app.ipreach.backend.users.service.UserService;
+import com.nimbusds.jose.JOSEException;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.text.ParseException;
 
 import static app.ipreach.backend.shared.constants.Authorities.Role.ADMIN_LEVEL;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -40,6 +44,12 @@ public class UserController {
         return userService.getMyUser(currentUser);
     }
 
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMyUser(@CurrentUser UserDetailsImpl currentUser, @Valid @RequestBody CredentialsDto credentialsDto, HttpServletResponse response)
+        throws ParseException, JOSEException {
+        return userService.updateMyUser(currentUser.getId(), credentialsDto, response);
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUser(@PathVariable long userId) {
         return userService.getUser(userId);
@@ -53,8 +63,8 @@ public class UserController {
 
     @Profile("!pro")
     @PutMapping("/{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable long userId, @Valid @RequestBody CredentialsDto credentialsDto) {
-        return userService.updateUser(userId, credentialsDto);
+    public ResponseEntity<?> updateUser(@PathVariable long userId, @Valid @RequestBody CredentialsDto credentialsDto, HttpServletResponse response) throws ParseException, JOSEException {
+        return userService.updateUser(userId, credentialsDto, response);
     }
 
     @Profile("!pro")
