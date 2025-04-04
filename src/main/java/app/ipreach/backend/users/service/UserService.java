@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +65,7 @@ public class UserService {
 
         authService.revokeAuthentication(userEntity);
 
-        if(userEntity.getId() == userId) {
+        if(getCurrentUser().getId() == userId) {
             var userDtoWithCookies = authService.renewAuthentication(userEntity, response);
             return buildResponse(CREATED, userDtoWithCookies, Messages.Info.USER_UPDATED);
         }
@@ -87,5 +89,13 @@ public class UserService {
         userEntity.setPassword(passwordEncoder.encode(credentialsDto.password()));
 
         return userRepositoryService.saveUser(userEntity);
+    }
+
+    private UserDetailsImpl getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetailsImpl) {
+            return (UserDetailsImpl) authentication.getPrincipal();
+        }
+        throw new RequestException(BAD_REQUEST, Messages.ErrorClient.USER_NOT_AUTHENTICATED);
     }
 }
