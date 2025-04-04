@@ -23,3 +23,9 @@ spring:
     username: ${DB_USER_MIGRATION:}
     password: ${DB_PASS_MIGRATION:}
     driverClassName: org.postgresql.Driver
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true

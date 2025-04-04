@@ -21,3 +21,9 @@ spring:
     defer-datasource-initialization: true # load schema from entities
     show-sql: false # show sql queries formatted (true for formatted, requires spring.jpa.properties.hibernate.show_sql and spring.jpa.properties.hibernate.format_sql)
     database-platform: org.hibernate.dialect.H2Dialect
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true

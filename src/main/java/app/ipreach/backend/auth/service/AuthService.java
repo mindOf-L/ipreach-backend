@@ -56,8 +56,8 @@ public class AuthService {
 
     @Value("${server.servlet.session.cookie.secure}")
     private boolean securedCookies;
-    @Value("${server.servlet.session.cookie.sameSite}")
-    private String sameSiteValue;
+    @Value("${server.servlet.session.cookie.same-site}")
+    private String sameSiteCookies;
 
     public ResponseEntity<?> loginUser(CredentialsDto credentialsDto, HttpServletResponse response) throws ParseException, JOSEException {
 
@@ -138,7 +138,7 @@ public class AuthService {
     private Cookie getRegularCookie(String key, String value) {
         var cookie = new Cookie(key, value);
         cookie.setHttpOnly(true);
-        cookie.setAttribute(SAME_SITE_COOKIE_ATTRIBUTE, sameSiteValue);
+        cookie.setAttribute(SAME_SITE_COOKIE_ATTRIBUTE, sameSiteCookies);
         cookie.setSecure(securedCookies);
         cookie.setPath("/api/v1");
         return cookie;

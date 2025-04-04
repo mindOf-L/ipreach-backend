@@ -18,3 +18,9 @@ spring:
         show_sql: ${SHOW_SQL:false}
     defer-datasource-initialization: true
     show-sql: false
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true
