@@ -7,7 +7,7 @@ services:
       - ${M2_DIR:-${HOME}/.m2}:/root/.m2
       - ./:/usr/src/app
     working_dir: /usr/src/app
-    command: mvn clean install -DskipTests
+    command: mvn clean install
 
   db:
     image: postgres:17

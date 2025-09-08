@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.4</version>
+        <version>3.5.5</version>
         <relativePath/>
     </parent>
 
@@ -25,19 +25,19 @@
         <!-- db -->
         <postgresql.version>42.7.7</postgresql.version>
         <!-- security + oauth -->
-        <nimbus.version>10.3</nimbus.version>
+        <nimbus.version>10.5</nimbus.version>
         <tink.version>1.18.0</tink.version>
         <bouncy-castle.version>1.81</bouncy-castle.version>
         <!-- map -->
-        <lombok.version>1.18.38</lombok.version>
+        <lombok.version>1.18.40</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
         <!-- util -->
         <guava.version>33.4.8-jre</guava.version>
         <!-- doc -->
-        <openapi.version>2.8.9</openapi.version>
+        <openapi.version>2.8.13</openapi.version>
         <!-- test -->
-        <datafaker.version>2.4.3</datafaker.version>
+        <datafaker.version>2.4.4</datafaker.version>
         <!--<junit-platform-suite.version>1.11.4</junit-platform-suite.version>-->
     </properties>
 
@@ -141,6 +141,13 @@
             <version>${openapi.version}</version>
         </dependency>
 
+        <!-- Temp dependency for vulnerability -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>net.datafaker</groupId>
@@ -217,11 +224,67 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>
-                        -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
-                        -Xshare:off
-                    </argLine>
+                    <argLine>${argLine} -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar -Xshare:off</argLine>
                 </configuration>
+            </plugin>
+            <!-- set minimum coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.13</version>
+                <configuration>
+                    <skip>${maven.test.skip}</skip>
+                    <output>file</output>
+                    <append>true</append>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.75</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                            <excludes>
+                                <!-- DTOs -->
+                                <exclude>**/*Dto.class</exclude>
+                                <exclude>**/*dto.class</exclude>
+                                <!-- packages -->
+                                <exclude>app/ipreach/backend/core/config/**</exclude>
+                                <exclude>app/ipreach/backend/core/exception/**</exclude>
+                                <exclude>app/ipreach/backend/core/migration/**</exclude>
+                                <exclude>app/ipreach/backend/shared/**</exclude>
+                                <exclude>app/ipreach/backend/test/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <!-- set the final name as backend.jar -->
