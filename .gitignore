@@ -14,6 +14,5 @@ target/
 .vscode/
 *.json
 
-target/
 tokens/
-.idea
+out/
