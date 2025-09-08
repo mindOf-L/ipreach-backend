@@ -26,19 +26,15 @@ public class LocationControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Setup test data
         mockResponse = ResponseEntity.ok().build();
     }
 
     @Test
     void getAllLocations_ShouldReturnAllLocations() {
-        // Arrange
         doReturn(mockResponse).when(locationService).getAllLocations();
 
-        // Act
         ResponseEntity<?> result = locationController.getAllLocations();
 
-        // Assert
         assertEquals(mockResponse, result);
         verify(locationService).getAllLocations();
     }

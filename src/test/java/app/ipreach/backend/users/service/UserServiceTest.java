@@ -75,7 +75,6 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Create a sample user
         List<ERole> roles = new ArrayList<>();
         roles.add(ERole.ROLE_USER);
 
@@ -88,7 +87,6 @@ class UserServiceTest {
                 .approved(true)
                 .build();
 
-        // Create a sample user DTO
         userDto = UserDto.builder()
                 .id(userId)
                 .email(email)
@@ -98,33 +96,27 @@ class UserServiceTest {
                 .approved(true)
                 .build();
 
-        // Create a sample credentials DTO
         credentialsDto = new CredentialsDto(email, password);
 
-        // Mock UserDetailsImpl
         lenient().when(userDetails.getId()).thenReturn(userId);
     }
 
     @Test
     void updateMyUser_ShouldUpdateUserAndRenewAuthentication() throws ParseException, JOSEException {
-        // Arrange
         when(userRepositoryService.getUserById(userId)).thenReturn(user);
         when(userRepositoryService.existByEmail(email)).thenReturn(false);
         when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
         when(userRepositoryService.saveUser(user)).thenReturn(user);
         when(authService.renewAuthentication(user, response)).thenReturn(userDto);
 
-        // Act
         ResponseEntity<?> result = userService.updateMyUser(userId, credentialsDto, response);
 
-        // Assert
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         ResponseDto responseDto = (ResponseDto) result.getBody();
         assertNotNull(responseDto);
         assertEquals(userDto, responseDto.data());
         assertEquals(Messages.Info.USER_UPDATED, responseDto.message());
 
-        // Verify
         verify(userRepositoryService).getUserById(userId);
         verify(userRepositoryService).existByEmail(email);
         verify(passwordEncoder).encode(password);
@@ -134,19 +126,16 @@ class UserServiceTest {
 
     @Test
     void updateMyUser_WithExistingEmail_ShouldThrowException() {
-        // Arrange
         User existingUser = User.builder().id(2L).email(email).build();
         when(userRepositoryService.existByEmail(email)).thenReturn(true);
         when(userRepositoryService.getUserByEmail(email)).thenReturn(existingUser);
 
-        // Act & Assert
-        RequestException exception = assertThrows(RequestException.class, () -> 
+        RequestException exception = assertThrows(RequestException.class, () ->
             userService.updateMyUser(userId, credentialsDto, response)
         );
         assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
         assertEquals(Messages.ErrorClient.USER_WITH_THIS_EMAIL_TAKEN, exception.getMessage());
 
-        // Verify
         verify(userRepositoryService).existByEmail(email);
         verify(userRepositoryService).getUserByEmail(email);
         verify(userRepositoryService, never()).saveUser(any(User.class));
@@ -159,30 +148,25 @@ class UserServiceTest {
 
     @Test
     void updateUser_ForCurrentUser_ShouldUpdateAndRenewAuthentication() throws ParseException, JOSEException {
-        // Arrange
         when(userRepositoryService.getUserById(userId)).thenReturn(user);
         when(userRepositoryService.existByEmail(email)).thenReturn(false);
         when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
         when(userRepositoryService.saveUser(user)).thenReturn(user);
         when(authService.renewAuthentication(user, response)).thenReturn(userDto);
 
-        // Mock SecurityContextHolder
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userDetails.getId()).thenReturn(userId);
         SecurityContextHolder.setContext(securityContext);
 
-        // Act
         ResponseEntity<?> result = userService.updateUser(userId, credentialsDto, response);
 
-        // Assert
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         ResponseDto responseDto = (ResponseDto) result.getBody();
         assertNotNull(responseDto);
         assertEquals(userDto, responseDto.data());
         assertEquals(Messages.Info.USER_UPDATED, responseDto.message());
 
-        // Verify
         verify(userRepositoryService).getUserById(userId);
         verify(userRepositoryService).existByEmail(email);
         verify(passwordEncoder).encode(password);
@@ -193,16 +177,13 @@ class UserServiceTest {
 
     @Test
     void deleteUser_ShouldDeleteUserAndReturnSuccessMessage() {
-        // Act
         ResponseEntity<?> response = userService.deleteUser(userId);
 
-        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ResponseDto responseDto = (ResponseDto) response.getBody();
         assertNotNull(responseDto);
         assertEquals(Messages.Info.USER_DELETED, responseDto.message());
 
-        // Verify
         verify(userRepositoryService).deleteById(userId);
     }
 }

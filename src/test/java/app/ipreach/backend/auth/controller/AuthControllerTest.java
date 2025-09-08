@@ -46,7 +46,6 @@ public class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Create a UserDetails object
         UserDetails userDetailsObj = new User(
             "test@example.com", 
             "Password1!", 
@@ -65,39 +64,30 @@ public class AuthControllerTest {
 
     @Test
     void loginUser_ShouldAuthenticateAndReturnTokens() throws ParseException, JOSEException {
-        // Arrange
         doReturn(mockResponse).when(authService).loginUser(any(CredentialsDto.class), any(HttpServletResponse.class));
 
-        // Act
         ResponseEntity<?> result = authController.loginUser(credentialsDto, response);
 
-        // Assert
         assertEquals(mockResponse, result);
         verify(authService).loginUser(credentialsDto, response);
     }
 
     @Test
     void logout_ShouldLogoutUserAndClearCookies() {
-        // Arrange
         doReturn(mockResponse).when(authService).logout(any(UserDetailsImpl.class), any(HttpServletResponse.class));
 
-        // Act
         ResponseEntity<?> result = authController.logout(userDetails, response);
 
-        // Assert
         assertEquals(mockResponse, result);
         verify(authService).logout(userDetails, response);
     }
 
     @Test
     void getUser_ShouldReturnUserDetails() {
-        // Arrange
         doReturn(mockResponse).when(authService).getUser(any(Authentication.class));
 
-        // Act
         ResponseEntity<?> result = authController.getUser(authentication);
 
-        // Assert
         assertEquals(mockResponse, result);
         verify(authService).getUser(authentication);
     }

@@ -103,7 +103,6 @@ public class AuthServiceTest {
         ReflectionTestUtils.setField(authService, "securedCookies", true);
         ReflectionTestUtils.setField(authService, "sameSiteCookies", "None");
 
-        // Set up test data
         email = "test@example.com";
         password = "Password1!";
         credentialsDto = new CredentialsDto(email, password);
@@ -128,7 +127,6 @@ public class AuthServiceTest {
             .approved(true)
             .build();
 
-        // Create a UserDetailsImpl
         org.springframework.security.core.userdetails.User userDetailsObj = new org.springframework.security.core.userdetails.User(
             email,
             password,
@@ -136,11 +134,9 @@ public class AuthServiceTest {
         );
         userDetails = new UserDetailsImpl(userDetailsObj, 1L);
 
-        // Mock JWT token generation - use lenient() to avoid UnnecessaryStubbingException
         lenient().when(jwtUtils.generateRegularToken(any(User.class))).thenReturn(signedJWT);
         lenient().when(jwtUtils.generateRefreshToken(any(User.class))).thenReturn(refreshToken);
 
-        // Mock JWT parts
         Base64URL[] parts = new Base64URL[]{
             new Base64URL("header"),
             new Base64URL("payload"),
@@ -149,7 +145,6 @@ public class AuthServiceTest {
         lenient().doReturn(parts).when(signedJWT).getParsedParts();
         lenient().when(refreshToken.getParsedString()).thenReturn("refreshTokenString");
 
-        // Mock JWT claims
         lenient().when(signedJWT.getJWTClaimsSet()).thenReturn(mock(com.nimbusds.jwt.JWTClaimsSet.class));
         lenient().when(refreshToken.getJWTClaimsSet()).thenReturn(mock(com.nimbusds.jwt.JWTClaimsSet.class));
         lenient().when(signedJWT.getJWTClaimsSet().getExpirationTime()).thenReturn(new Date());
@@ -158,15 +153,12 @@ public class AuthServiceTest {
 
     @Test
     void loginUser_WithValidCredentials_ShouldReturnTokens() throws ParseException, JOSEException {
-        // Arrange
         when(userRepositoryService.getUserByEmail(email)).thenReturn(user);
         when(passwordEncoder.matches(password, user.getPassword())).thenReturn(true);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
 
-        // Act
         ResponseEntity<?> result = authService.loginUser(credentialsDto, response);
 
-        // Assert
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         verify(userRepositoryService).getUserByEmail(email);
@@ -179,12 +171,10 @@ public class AuthServiceTest {
 
     @Test
     void loginUser_WithInvalidPassword_ShouldThrowException() {
-        // Arrange
         when(userRepositoryService.getUserByEmail(email)).thenReturn(user);
         when(passwordEncoder.matches(password, user.getPassword())).thenReturn(false);
 
-        // Act & Assert
-        RequestException exception = assertThrows(RequestException.class, () -> 
+        RequestException exception = assertThrows(RequestException.class, () ->
             authService.loginUser(credentialsDto, response)
         );
         assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
@@ -196,12 +186,10 @@ public class AuthServiceTest {
 
     @Test
     void loginUser_WithDisabledUser_ShouldThrowException() {
-        // Arrange
         user.setApproved(false);
         when(userRepositoryService.getUserByEmail(email)).thenReturn(user);
 
-        // Act & Assert
-        RequestException exception = assertThrows(RequestException.class, () -> 
+        RequestException exception = assertThrows(RequestException.class, () ->
             authService.loginUser(credentialsDto, response)
         );
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getHttpStatus());
@@ -214,10 +202,8 @@ public class AuthServiceTest {
 
     @Test
     void logout_ShouldClearCookiesAndDeleteTokens() {
-        // Act
         ResponseEntity<?> result = authService.logout(userDetails, response);
 
-        // Assert
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         verify(response, times(3)).addCookie(any(Cookie.class));
@@ -226,14 +212,11 @@ public class AuthServiceTest {
 
     @Test
     void getUser_ShouldReturnUserDetails() {
-        // Arrange
         when(authentication.getName()).thenReturn(email);
         when(userRepositoryService.getUserByEmail(email)).thenReturn(user);
 
-        // Act
         ResponseEntity<?> result = authService.getUser(authentication);
 
-        // Assert
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         verify(userRepositoryService).getUserByEmail(email);
@@ -241,19 +224,15 @@ public class AuthServiceTest {
 
     @Test
     void revokeAuthentication_ShouldDeleteAllTokens() {
-        // Act
         authService.revokeAuthentication(user);
 
-        // Assert
         verify(tokenRepository).deleteAllTokensFromUser(user.getId());
     }
 
     @Test
     void renewAuthentication_ShouldDeleteOldTokensAndCreateNewOnes() throws ParseException, JOSEException {
-        // Act
         UserDto result = authService.renewAuthentication(user, response);
 
-        // Assert
         assertNotNull(result);
         verify(tokenRepository).deleteAllTokensFromUser(user.getId());
         verify(jwtUtils).generateRegularToken(user);
@@ -263,10 +242,8 @@ public class AuthServiceTest {
 
     @Test
     void createToken_ShouldCreateTokensAndAddCookies() throws ParseException, JOSEException {
-        // Act
         UserDto result = authService.createToken(user, response);
 
-        // Assert
         assertNotNull(result);
         verify(jwtUtils).generateRegularToken(user);
         verify(jwtUtils).generateRefreshToken(user);

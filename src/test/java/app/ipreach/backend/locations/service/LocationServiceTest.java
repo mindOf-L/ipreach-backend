@@ -41,7 +41,6 @@ class LocationServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Create a sample location
         location = Location.builder()
                 .id(1L)
                 .name("Test Location")
@@ -50,7 +49,6 @@ class LocationServiceTest {
                 .details("Test details")
                 .build();
 
-        // Create a sample location DTO
         locationDto = LocationDto.builder()
                 .id(1L)
                 .name("Test Location")
@@ -62,14 +60,11 @@ class LocationServiceTest {
 
     @Test
     void getAllLocations_WithLocations_ShouldReturnLocations() {
-        // Arrange
         List<Location> locations = List.of(location);
         when(locationRepository.findAll()).thenReturn(locations);
 
-        // Act
         ResponseEntity<?> response = locationService.getAllLocations();
 
-        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ResponseDto responseDto = (ResponseDto) response.getBody();
         assertNotNull(responseDto);
@@ -82,19 +77,15 @@ class LocationServiceTest {
         List<LocationDto> resultLocations = (List<LocationDto>) responseDto.data();
         assertEquals(1, resultLocations.size());
 
-        // Verify
         verify(locationRepository).findAll();
     }
 
     @Test
     void getAllLocations_WithNoLocations_ShouldReturnEmptyList() {
-        // Arrange
         when(locationRepository.findAll()).thenReturn(Collections.emptyList());
 
-        // Act
         ResponseEntity<?> response = locationService.getAllLocations();
 
-        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ResponseDto responseDto = (ResponseDto) response.getBody();
         assertNotNull(responseDto);
@@ -107,67 +98,51 @@ class LocationServiceTest {
         List<LocationDto> resultLocations = (List<LocationDto>) responseDto.data();
         assertTrue(resultLocations.isEmpty());
 
-        // Verify
         verify(locationRepository).findAll();
     }
 
     @Test
     void getLocationById_WithExistingId_ShouldReturnLocation() {
-        // Arrange
         when(locationRepository.findById(1L)).thenReturn(Optional.of(location));
 
-        // Act
         Location result = locationService.getLocationById(1L);
 
-        // Assert
         assertNotNull(result);
         assertEquals(location, result);
 
-        // Verify
         verify(locationRepository).findById(1L);
     }
 
     @Test
     void getLocationById_WithNonExistingId_ShouldThrowException() {
-        // Arrange
         when(locationRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // Act & Assert
         RequestException exception = assertThrows(RequestException.class, () -> locationService.getLocationById(999L));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
         assertEquals(Messages.ErrorClient.LOCATION_NOT_FOUND, exception.getMessage());
 
-        // Verify
         verify(locationRepository).findById(999L);
     }
 
     @Test
     void locationExists_WithExistingId_ShouldReturnTrue() {
-        // Arrange
         when(locationRepository.existsById(1L)).thenReturn(true);
 
-        // Act
         boolean result = locationService.locationExists(1L);
 
-        // Assert
         assertTrue(result);
 
-        // Verify
         verify(locationRepository).existsById(1L);
     }
 
     @Test
     void locationExists_WithNonExistingId_ShouldReturnFalse() {
-        // Arrange
         when(locationRepository.existsById(999L)).thenReturn(false);
 
-        // Act
         boolean result = locationService.locationExists(999L);
 
-        // Assert
         assertFalse(result);
 
-        // Verify
         verify(locationRepository).existsById(999L);
     }
 }

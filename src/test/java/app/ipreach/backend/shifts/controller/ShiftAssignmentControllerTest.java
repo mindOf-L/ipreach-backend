@@ -32,7 +32,6 @@ public class ShiftAssignmentControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Setup test data
         shiftAssignmentId = 1L;
         shiftAssignmentDto = giveMeAssignment(shiftAssignmentId);
         mockResponse = ResponseEntity.ok().build();
@@ -40,26 +39,20 @@ public class ShiftAssignmentControllerTest {
 
     @Test
     void getShiftAssignments_ShouldReturnShiftAssignments() {
-        // Arrange
         doReturn(mockResponse).when(shiftAssignmentService).getShiftAssignments(anyLong());
 
-        // Act
         ResponseEntity<?> result = shiftAssignmentController.getShiftAssignments(shiftAssignmentId);
 
-        // Assert
         assertEquals(mockResponse, result);
         verify(shiftAssignmentService).getShiftAssignments(shiftAssignmentId);
     }
 
     @Test
     void createShiftAssignment_ShouldCreateShiftAssignmentAndReturnCreatedShiftAssignment() {
-        // Arrange
         doReturn(mockResponse).when(shiftAssignmentService).createShiftAssignment(any(ShiftAssignmentDto.class));
 
-        // Act
         ResponseEntity<?> result = shiftAssignmentController.createShiftAssignment(shiftAssignmentDto);
 
-        // Assert
         assertEquals(mockResponse, result);
         verify(shiftAssignmentService).createShiftAssignment(shiftAssignmentDto);
     }
